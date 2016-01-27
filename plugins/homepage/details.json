@@ -1,0 +1,42 @@
+{
+    "uid": "homepage",
+    "name": "Trang Chu",
+    "description": "Theme cho trang chu",
+    "version": "0.2.5",
+    "pb_version": "0.5.x",
+	"author": {
+		"name": "PhongDo",
+		"email": "phongdo.sw@gmail.com",
+		"website": "http://pencilblue.org",
+		"contributors": [
+			{
+				"name": "Blake Callens",
+				"email": ""
+			},
+			{
+				"name": "Brian Hyder",
+				"email": ""
+			}
+		]
+	},
+	"settings": [],
+	"permissions": {
+		"ACCESS_USER": [],
+		"ACCESS_WRITER": [],
+		"ACCESS_EDITOR": [],
+		"ACCESS_MANAGING_EDITOR": []
+	},
+	"main_module": {
+		"path": "homepage.js"
+	},
+	"theme": {
+		"settings": [],
+		"content_templates":
+		[
+			{
+				"file": "index",
+				"name": "Default"
+			}
+		]
+	}
+}
