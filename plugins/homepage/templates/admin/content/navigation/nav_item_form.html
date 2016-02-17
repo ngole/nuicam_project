@@ -12,11 +12,24 @@
                         <select id="content_type" name="type" class="form-control" ng-model="navItem.type" ng-options="type.value as type.label for type in types" required></select>
                         <div class="form_error" ng-if="!isFieldValid(navItemForm.type)">^loc_REQUIRED_FIELD^</div>
                     </div>
-                    <div class="form-group" ng-class="{'has-error': !isFieldValid(navItemForm.name)}">
-                        <label>^loc_NAME^</label>
-                        <input type="text" name="name" class="form-control" ng-model="navItem.name" required></input>
-                        <div class="form_error" ng-if="!isFieldValid(navItemForm.name)">^loc_REQUIRED_FIELD^</div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group" ng-class="{'has-error': !isFieldValid(navItemForm.name)}">
+                                <label>^loc_NAME^</label>
+                                <input type="text" name="name" class="form-control" ng-model="navItem.name" required></input>
+                                <div class="form_error" ng-if="!isFieldValid(navItemForm.name)">^loc_REQUIRED_FIELD^</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group" ng-class="{'has-error': !isFieldValid(navItemForm.name)}">
+                                <label>^loc_NAME_EN^</label>
+                                <input type="text" name="name_en" class="form-control" ng-model="navItem.name_en" required></input>
+                                <div class="form_error" ng-if="!isFieldValid(navItemForm.name)">^loc_REQUIRED_FIELD^</div>
+                            </div>
+                        </div>
                     </div>
+
                     <div class="form-group">
                         <label>^loc_DESCRIPTION^</label>
                         <textarea class="form-control" ng-model="navItem.description"></textarea>
@@ -26,26 +39,87 @@
                         <select class="form-control" ng-model="navItem.parent" ng-options="parent._id as parent.name for parent in parents"></select>
                     </div>
                     <div ng-if="navItem.type === 'section'">
-                        <div class="form-group" ng-class="{'has-error': !isFieldValid(navItemForm.url)}">
-                            <label>^loc_URL_KEY^</label>
-                            <div class="input-group">
-                                <span class="input-group-addon">section/</span>
-                                <input type="text" name="url" class="form-control" ng-model="navItem.url" ng-change="resetUrlAvailability()" required></input>
-                                <span class="input-group-btn">
-                                  <button type="button" class="btn" ng-class="{'btn-default': urlAvailable === null, 'btn-success': urlAvailable === true, 'btn-danger': urlAvailable === false}" ng-click="getUrlAvailability()" ng-disabled="!navItem.url.length">
-                                    <span ng-if="urlAvailable === null">^loc_CHECK^</span>
-                                    <span ng-if="urlAvailable === true"><i class="fa fa-check"></i>&nbsp;^loc_AVAILABLE^</span>
-                                    <span ng-if="urlAvailable === false"><i class="fa fa-ban"></i>&nbsp;^loc_UNAVAILABLE^</span>
-                                  </button>
-                                </span>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group" ng-class="{'has-error': !isFieldValid(navItemForm.url)}">
+                                    <label>^loc_URL_KEY^</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">section/</span>
+                                        <input type="text" name="url" class="form-control" ng-model="navItem.url" ng-change="resetUrlAvailability()" required></input>
+                                        <span class="input-group-btn">
+                                          <button type="button" class="btn" ng-class="{'btn-default': urlAvailable === null, 'btn-success': urlAvailable === true, 'btn-danger': urlAvailable === false}" ng-click="getUrlAvailability()" ng-disabled="!navItem.url.length">
+                                            <span ng-if="urlAvailable === null">^loc_CHECK^</span>
+                                            <span ng-if="urlAvailable === true"><i class="fa fa-check"></i>&nbsp;^loc_AVAILABLE^</span>
+                                            <span ng-if="urlAvailable === false"><i class="fa fa-ban"></i>&nbsp;^loc_UNAVAILABLE^</span>
+                                          </button>
+                                        </span>
+                                    </div>
+                                    <div class="form_error" ng-if="!isFieldValid(navItemForm.url)">^loc_REQUIRED_FIELD^</div>
+                                </div>
                             </div>
-                            <div class="form_error" ng-if="!isFieldValid(navItemForm.url)">^loc_REQUIRED_FIELD^</div>
+                            <div class="col-md-6">
+                                <div class="form-group" ng-class="{'has-error': !isFieldValid(navItemForm.url)}">
+                                    <label>^loc_URL_KEY_EN^</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">section/</span>
+                                        <input type="text" name="url_en" class="form-control" ng-model="navItem.url_en" ng-change="resetUrlAvailability()" required></input>
+                                        <span class="input-group-btn">
+                                          <button type="button" class="btn" ng-class="{'btn-default': urlAvailable === null, 'btn-success': urlAvailable === true, 'btn-danger': urlAvailable === false}" ng-click="getUrlAvailability()" ng-disabled="!navItem.url.length">
+                                              <span ng-if="urlAvailable === null">^loc_CHECK^</span>
+                                              <span ng-if="urlAvailable === true"><i class="fa fa-check"></i>&nbsp;^loc_AVAILABLE^</span>
+                                              <span ng-if="urlAvailable === false"><i class="fa fa-ban"></i>&nbsp;^loc_UNAVAILABLE^</span>
+                                          </button>
+                                        </span>
+                                    </div>
+                                    <div class="form_error" ng-if="!isFieldValid(navItemForm.url)">^loc_REQUIRED_FIELD^</div>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>^loc_EDITOR^</label>
                             <select class="form-control" ng-model="navItem.editor" ng-options="editor._id as editor.name for editor in editors"></select>
                         </div>
                     </div>
+
+                    <div ng-if="navItem.type === 'container'">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group" ng-class="{'has-error': !isFieldValid(navItemForm.url)}">
+                                    <label>^loc_URL_KEY^</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">/</span>
+                                        <input type="text" name="url" class="form-control" ng-model="navItem.url" ng-change="resetUrlAvailability()" required>
+                                        <span class="input-group-btn">
+                                          <button type="button" class="btn" ng-class="{'btn-default': urlAvailable === null, 'btn-success': urlAvailable === true, 'btn-danger': urlAvailable === false}" ng-click="getUrlAvailability()" ng-disabled="!navItem.url.length">
+                                              <span ng-if="urlAvailable === null">^loc_CHECK^</span>
+                                              <span ng-if="urlAvailable === true"><i class="fa fa-check"></i>&nbsp;^loc_AVAILABLE^</span>
+                                              <span ng-if="urlAvailable === false"><i class="fa fa-ban"></i>&nbsp;^loc_UNAVAILABLE^</span>
+                                          </button>
+                                        </span>
+                                    </div>
+                                    <div class="form_error" ng-if="!isFieldValid(navItemForm.url)">^loc_REQUIRED_FIELD^</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group" ng-class="{'has-error': !isFieldValid(navItemForm.url)}">
+                                    <label>^loc_URL_KEY_EN^</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">/</span>
+                                        <input type="text" name="url_en" class="form-control" ng-model="navItem.url_en" ng-change="resetUrlEnAvailability()" required>
+                                        <span class="input-group-btn">
+                                          <button type="button" class="btn" ng-class="{'btn-default': urlEnAvailable === null, 'btn-success': urlEnAvailable === true, 'btn-danger': urlEnAvailable === false}" ng-click="getUrlEnAvailability()" ng-disabled="!navItem.url_en.length">
+                                              <span ng-if="urlEnAvailable === null">^loc_CHECK^</span>
+                                              <span ng-if="urlEnAvailable === true"><i class="fa fa-check"></i>&nbsp;^loc_AVAILABLE^</span>
+                                              <span ng-if="urlEnAvailable === false"><i class="fa fa-ban"></i>&nbsp;^loc_UNAVAILABLE^</span>
+                                          </button>
+                                        </span>
+                                    </div>
+                                    <div class="form_error" ng-if="!isFieldValid(navItemForm.url)">^loc_REQUIRED_FIELD^</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div ng-if="navItem.type === 'article' || navItem.type === 'page'">
                         <div class="form-group" ng-class="{'has-error': !isFieldValid(navItemForm.item)}">
                             <label>
@@ -60,9 +134,18 @@
                     </div>
                     <div ng-if="navItem.type === 'link'">
                         <div class="form-group" ng-class="{'has-error': !isFieldValid(navItemForm.link)}">
-                            <label>^loc_LINK^</label>
-                            <input type="text" name="link" class="form-control" ng-model="navItem.link" required></input>
-                            <div class="form_error" ng-if="!isFieldValid(navItemForm.link)">^loc_REQUIRED_FIELD^</div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>^loc_LINK^</label>
+                                    <input type="text" name="link" class="form-control" ng-model="navItem.link" required></input>
+                                    <div class="form_error" ng-if="!isFieldValid(navItemForm.link)">^loc_REQUIRED_FIELD^</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>^loc_LINK_EN^</label>
+                                    <input type="text" name="link" class="form-control" ng-model="navItem.link_en" required />
+                                    <div class="form-error" ng-if="!isFieldValid(navItemForm.link_en)">^loc_REQUIRED_FIELD^</div>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>^loc_LINK_IN_TAB^</label><br/>

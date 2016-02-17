@@ -8,33 +8,71 @@
 			<div class="tab-content">
 				<div class="tab-pane active" id="content">
 					<div class="form-group" ng-class="{'has-error': !isFieldValid(articleForm.headline)}">
-						<label>^loc_HEADLINE^</label>
-						<input type="text" name="headline" class="form-control" ng-model="article.headline" required></input>
-						<div class="form_error" ng-if="!isFieldValid(articleForm.headline)">^loc_REQUIRED_FIELD^</div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>^loc_HEADLINE^</label>
+                                <input type="text" name="headline" class="form-control" ng-model="article.headline" required></input>
+                                <div class="form_error" ng-if="!isFieldValid(articleForm.headline)">^loc_REQUIRED_FIELD^</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>^loc_HEADLINE_EN^</label>
+                                <input type="text" name="headline_en" class="form-control" ng-model="article.headline_en" required></input>
+                            </div>
+                        </div>
 					</div>
 					<div class="form-group">
-						<label>^loc_SUBHEADING^</label>
-						<input type="text" class="form-control" ng-model="article.subheading"></input>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>^loc_SUBHEADING^</label>
+                                <input type="text" class="form-control" ng-model="article.subheading"></input>
+                            </div>
+                            <div class="col-md-6">
+                                <label>^loc_SUBHEADING_EN^</label>
+                                <input type="text" class="form-control" ng-model="article.subheading_en"></input>
+                            </div>
+                        </div>
 					</div>
 					<div class="form-group" ng-class="{'has-error': !isFieldValid(articleForm.url)}">
-						<label>^loc_ARTICLE_URL^</label>
-						<div class="input-group">
-							<span class="input-group-addon">/article/</span>
-							<input type="text" name="url" class="form-control" placeholder="^loc_CUSTOM_URL^" ng-model="article.url" ng-change="resetUrlAvailability()" url-safe required></input>
-							<span class="input-group-btn">
-								<button type="button" class="btn" ng-class="{'btn-default': urlGenerated === null, 'btn-success': urlGenerated === true, 'btn-danger': urlGenerated === false}" ng-click="getUrl()" ng-disabled="articleForm.headline.$invalid">
-									<span ng-if="urlGenerated === null">^loc_GENERATE^</span>
-									<span ng-if="urlGenerated === true"><i class="fa fa-check"></i>&nbsp;^loc_GENERATED^</span>
-									<span ng-if="urlGenerated === false"><i class="fa fa-ban"></i>&nbsp;^loc_NOT_GENERATED^</span>
-								</button>
-								<button type="button" class="btn" ng-class="{'btn-default': urlAvailable === null, 'btn-success': urlAvailable === true, 'btn-danger': urlAvailable === false}" ng-click="getUrlAvailability()" ng-disabled="!article.url.length">
-									<span ng-if="urlAvailable === null">^loc_CHECK^</span>
-									<span ng-if="urlAvailable === true"><i class="fa fa-check"></i>&nbsp;^loc_AVAILABLE^</span>
-									<span ng-if="urlAvailable === false"><i class="fa fa-ban"></i>&nbsp;^loc_UNAVAILABLE^</span>
-								</button>
-							</span>
-						</div>
-						<div class="form_error" ng-if="!isFieldValid(articleForm.url)">^loc_REQUIRED_FIELD^</div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>^loc_ARTICLE_URL^</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon">/article/</span>
+                                    <input type="text" name="url" class="form-control" placeholder="^loc_CUSTOM_URL^" ng-model="article.url" ng-change="resetUrlAvailability()" url-safe required></input>
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn" ng-class="{'btn-default': urlGenerated === null, 'btn-default': urlGenerated === true, 'btn-danger': urlGenerated === false}" ng-click="getUrl()" ng-disabled="articleForm.headline.$invalid">
+                                            <span ng-if="urlGenerated === null">^loc_GENERATE^</span>
+                                            <span ng-if="urlGenerated === true">&nbsp;^loc_GENERATE^</span>
+                                            <span ng-if="urlGenerated === false"><i class="fa fa-ban"></i>&nbsp;^loc_NOT_GENERATED^</span>
+                                        </button>
+                                        <button type="button" class="btn" ng-class="{'btn-default': urlAvailable === null, 'btn-success': urlAvailable === true, 'btn-danger': urlAvailable === false}" ng-click="getUrlAvailability()" ng-disabled="!article.url.length">
+                                            <span ng-if="urlAvailable === null">^loc_CHECK^</span>
+                                            <span ng-if="urlAvailable === true"><i class="fa fa-check"></i>&nbsp;</span>
+                                            <span ng-if="urlAvailable === false"><i class="fa fa-ban"></i>&nbsp;</span>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>^loc_ARTICLE_URL_EN^</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon">/article/</span>
+                                    <input type="text" name="url_en" class="form-control" placeholder="^loc_CUSTOM_URL_EN^" ng-model="article.url_en" ng-change="resetUrlEnAvailability()" url-safe></input>
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn" ng-class="{'btn-default': urlEnGenerated === null, 'btn-default': urlEnGenerated === true, 'btn-danger': urlEnGenerated === false}" ng-click="getUrlEn()" ng-disabled="articleForm.headline_en.$invalid">
+                                            <span ng-if="urlEnGenerated === null">^loc_GENERATE_EN^</span>
+                                            <span ng-if="urlEnGenerated === true">&nbsp;^loc_GENERATE_EN^</span>
+                                            <span ng-if="urlEnGenerated === false"><i class="fa fa-ban"></i>&nbsp;^loc_NOT_GENERATED_EN^</span>
+                                        </button>
+                                        <button type="button" class="btn" ng-class="{'btn-default': urlEnAvailable === null, 'btn-success': urlEnAvailable === true, 'btn-danger': urlEnAvailable === false}" ng-click="getUrlEnAvailability()" ng-disabled="!article.url_en.length">
+                                            <span ng-if="urlEnAvailable === null">^loc_CHECK_EN^</span>
+                                            <span ng-if="urlEnAvailable === true"><i class="fa fa-check"></i>&nbsp;</span>
+                                            <span ng-if="urlEnAvailable === false"><i class="fa fa-ban"></i>&nbsp;</span>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
 					</div>
 					<div class="form-group">
 						<label>^loc_STANDALONE_TEMPLATE^</label>
@@ -48,14 +86,27 @@
 							<select class="form-control" ng-model="article.author" ng-options="availableAuthor._id as availableAuthor.name for availableAuthor in availableAuthors"></select>
 					</div>
 					<div class="form-group" ng-class="{'has-error': !isFieldValid(articleForm.publish_date)}">
-						<label>^loc_PUBLISH_DATE^</label>
-						<div class="input-group">
-							<input type="text" name="publish_date" id="publish_date" class="form-control" ng-model="article.publish_date" required></input>
-							<span class="input-group-btn">
-								<button class="btn btn-default" type="button" ng-click="setPublishDateToNow()">^loc_NOW^</button>
-							</span>
-						</div>
-						<div class="form_error" ng-if="!isFieldValid(articleForm.publish_date)">^loc_REQUIRED_FIELD^</div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>^loc_PUBLISH_DATE^</label>
+                                <div class="input-group">
+                                    <input type="text" name="publish_date" id="publish_date" class="form-control" ng-model="article.publish_date" required></input>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" ng-click="setPublishDateToNow()">^loc_NOW^</button>
+                                    </span>
+                                </div>
+                                <div class="form_error" ng-if="!isFieldValid(articleForm.publish_date)">^loc_REQUIRED_FIELD^</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>^loc_PUBLISH_DATE_EN^</label>
+                                <div class="input-group">
+                                    <input type="text" name="publish_date_en" id="publish_date_en" class="form-control" ng-model="article.publish_date_en"></input>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" ng-click="setPublishDateToNow()">^loc_NOW_EN^</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
 					</div>
 					<div class="form-group">
 					    <label>^loc_ALLOW_COMMENTS^?</label><br/>
@@ -65,9 +116,14 @@
 					    </div>
 					</div>
 					<div class="form-group" ng-class="{'has-error': !isWysiwygValid(layout)}">
+                        <label>^loc_CONTENT^</label>
 						<wysiwyg layout="layout" media="article.article_media"></wysiwyg>
 						<div class="form_error" ng-if="!isWysiwygValid(layout)" style="margin-top: -1em">^loc_REQUIRED_FIELD^</div>
 					</div>
+                    <div class="form-group">
+                        <label>^loc_CONTENT_EN^</label>
+                        <wysiwyg layout="layout_en" media="article.article_media"></wysiwyg>
+                    </div>
 				</div>
 				<div class="tab-pane" id="media">
 					^tmp_admin=elements=inline_media^

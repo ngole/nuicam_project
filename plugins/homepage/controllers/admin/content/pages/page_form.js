@@ -94,6 +94,7 @@ module.exports = function(pb) {
         var self = this;
         if(data.page[pb.DAO.getIdField()]) {
             var media = [];
+            var media_en = [];
             var i, j;
 
             for(i = 0; i < data.page.page_media.length; i++) {
@@ -105,7 +106,19 @@ module.exports = function(pb) {
                     }
                 }
             }
+
+            for(i = 0; i < data.page.page_media_en.length; i++) {
+                for(j = 0; j < data.media_en.length; j++) {
+                    if(pb.DAO.areIdsEqual(data.media_en[j][pb.DAO.getIdField()], data.page.page_media_en[i])) {
+                        media_en.push(data.media_en[j]);
+                        data.media_en.splice(j, 1);
+                        break;
+                    }
+                }
+            }
+
             data.page.page_media = media;
+            data.page.page_media_en = media_en;
 
             var topics = [];
             for(i = 0; i < data.page.page_topics.length; i++) {
@@ -128,6 +141,7 @@ module.exports = function(pb) {
             sections: data.sections,
             topics: data.topics,
             media: data.media,
+            media_en: data.media_en,
             page: data.page,
             siteKey: pb.SiteService.SITE_FIELD,
             site: self.site

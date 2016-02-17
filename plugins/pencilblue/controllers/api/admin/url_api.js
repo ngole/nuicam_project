@@ -36,7 +36,8 @@ module.exports = function(pb) {
     //constants
     var ACTIONS = {
         exists: false,
-        exists_for: false
+        exists_for: false,
+        exists_for_en: false
     };
 
     /**
@@ -116,6 +117,33 @@ module.exports = function(pb) {
             service = new UrlService();
         }
         service.existsForType(params, function(err, exists) {
+            if (util.isError(err)) {
+                var content = BaseController.apiResponse(BaseController.API_FAILURE, err.message);
+                cb({content: content, code: 500});
+                return;
+            }
+
+            //now build response
+            var content = BaseController.apiResponse(BaseController.API_SUCCESS, '', exists);
+            cb({content: content});
+        });
+    };
+
+    UrlApiController.prototype.exists_for_en = function(cb) {
+
+        var params = {
+            type: this.query.type,
+            id: this.query.id,
+            url_en: this.query.url
+        };
+        var service;
+        var SITE_FIELD = pb.SiteService.SITE_FIELD;
+        if (SITE_FIELD in this.query) {
+            service = new UrlService(this.query[SITE_FIELD], true);
+        } else {
+            service = new UrlService();
+        }
+        service.existsForTypeEn(params, function(err, exists) {
             if (util.isError(err)) {
                 var content = BaseController.apiResponse(BaseController.API_FAILURE, err.message);
                 cb({content: content, code: 500});

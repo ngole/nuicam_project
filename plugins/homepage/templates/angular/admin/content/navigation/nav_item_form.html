@@ -9,6 +9,7 @@
         ^tmp_angular=admin=elements=error_success^
 
         $scope.urlAvailable = null;
+        $scope.urlEnAvailable = null;
 
         $scope.setItem = function(item) {
             $scope.navItem.item = item;
@@ -40,9 +41,23 @@
           });
         };
 
+        $scope.getUrlEnAvailability = function() {
+            $http.get('/api/url/exists_for_en?url=' + $scope.navItem.url_en + '&type=section')
+                    .success(function(result) {
+                        $scope.urlEnAvailable = !result.data;
+                    })
+                    .error(function(error, status) {
+                        $scope.errorMessage = error.message;
+                    });
+        };
+
         $scope.resetUrlAvailability = function() {
           $scope.urlAvailable = null;
         };
+
+        $scope.resetUrlEnAvailability = function(){
+            $scope.urlEnAvailable = null;
+        }
 
         $scope.saveNavItem = function() {
             $scope.formSubmitted = true;
@@ -74,15 +89,20 @@
             var saveObject = {
                 type: $scope.navItem.type,
                 name: $scope.navItem.name,
+                name_en: $scope.navItem.name_en,
                 description: $scope.navItem.description
             }
 
             switch($scope.navItem.type) {
                 case 'container':
+                    saveObject.url = $scope.navItem.url;
+                    saveObject.url_en = $scope.navItem.url_en;
+                    saveObject.editor = $scope.navItem.editor;
                     break;
                 case 'section':
                     saveObject.parent = $scope.navItem.parent;
                     saveObject.url = $scope.navItem.url;
+                    saveObject.url_en = $scope.navItem.url_en;
                     saveObject.editor = $scope.navItem.editor;
                     break;
                 case 'article':
@@ -93,12 +113,12 @@
                 case 'link':
                     saveObject.parent = $scope.navItem.parent;
                     saveObject.link = $scope.navItem.link;
+                    saveObject.link_en = $scope.navItem.link_en;
                     saveObject.new_tab = $scope.navItem.new_tab === true;
                     break;
                 default:
                     break;
             }
-
             return saveObject;
         };
     });

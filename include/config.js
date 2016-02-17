@@ -363,7 +363,7 @@ Configuration.getBaseConfig = function(multisite) {
 
             //The maximum size of media files that can be uploaded to the server in
             //bytes
-            max_upload_size: 2 * 1024 * 1024
+            max_upload_size: 60 * 1024 * 1024
         },
 
         //Contains all of the configuration for localization and internationalization.

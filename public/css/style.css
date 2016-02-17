@@ -1,9 +1,31 @@
+body{
+    background: #e4dfbe;
+}
 .head-background{
-    background: url("../../img/nuicam/banner_NuiCam.jpg");
+    background: url("../../img/nuicam/Header_1000x115px.png");
     height: 115px;
-    /*background-size: cover;*/
+    padding-right: 10px;
     background-repeat: no-repeat;
     background-position: center center;
+}
+.head-background a{
+    float: right;
+    margin-right: 10px;
+}
+.head-background a:first-child{
+    float: left;
+}
+.head-background img{
+    float: left;
+}
+.background-content{
+    line-height: 98px;
+    height: 98px;
+}
+.element {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
 }
 #nav_desktop{
     width: 1000px;
@@ -13,7 +35,7 @@
     padding: 0px;
 }
 .navbar-default{
-    background: url("../../img/nuicam/menubar2.jpg");
+
 }
 @media (min-width: 768px){
     .navbar-nav>li>a{
@@ -21,25 +43,26 @@
     }
 }
 .homepage-footer{
-    background: url("../../img/nuicam/footer2.jpg");
-    background-size: cover;
-    background-repeat: no-repeat;
+    background: url("../../img/nuicam/Bg_Footer_1000x312px.png");
+    /*background-size: cover;*/
+    background-repeat: repeat;
     background-position: center center;
-    height: 200px;
+    /*height: 250px;*/
 }
 .category-list{
     height: 50px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 /*.category-list ul li{
     display: inline-block;
 
 }*/
-.category-list .row .col-md-3{
+.category-list .row div{
     text-align: center;
-    background: #0000FF;
 }
-.category-list .row .col-md-3 a{
-    margin-left: 20px;
+.category-list .row div a{
+    margin-left: 10px;
     font-weight: bold;
     font-size: 1.2em;
     color:#ffffff;
@@ -58,6 +81,17 @@
 .navbar{
     min-height: 0px;
 }
+.navbar-nav > li a{
+    color: #ffffff;
+    font-weight: bold;
+}
+.navbar-default .navbar-nav>li>a {
+    color: #ffffff;
+}
+.navbar-nav > li a {
+     color: #ffffff;
+    font-weight: bold;
+}
 .fa-angle-down{
     display: none;
 }
@@ -65,3 +99,215 @@
     margin-right: 0px;
     margin-left: 0px;
 }
+.page-background{
+    min-height: 300px;
+    background: url("/img/nuicam/slider_small.jpg");
+}
+.bar{
+    background: #c4dff2;
+    height: 100%;min-height: 300px;
+    padding: 0px;
+}
+.space{
+    background: url("/img/nuicam/Bg_Blue_1px.png");
+    height: 5px;
+}
+.box-header{
+    text-align: center;
+
+    margin-top: 1px;
+    padding: 3px 0px;
+}
+.box-header a{
+    color: #0046ba;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+.box-content{
+    padding-top: 5px;
+}
+.box-content > div{
+    width: 90%;
+    margin: auto;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-top: 1px solid #ffffff;
+    /*padding-bottom: 3px;*/
+    padding-top: 5px;
+}
+.box-content div:last-child{
+
+}
+.box-content div a{
+    text-align: justify;
+    color: #0046ba;
+}
+.box-content .row{
+    width: 100%;
+    margin-top: 0px;
+    padding: 0px;
+}
+.box-content .row div{
+    width: 100%;
+    padding: 3px;
+}
+.box-footer{
+    text-align: right;
+    padding-right: 5px;
+    padding-bottom: 10px;
+}
+.box-footer a{
+    color: #0040D0;
+    font-weight: bold;
+    font-style: italic;
+}
+.article > .col-md-12{
+    padding-top: 10px;
+}
+.article_body{
+    margin-top: 10px;
+}
+.article > .col-md-12 > span{
+    color: #0046ba;
+    font-weight: bold;
+    font-size: 1.5em;
+}
+.article-container .row{
+    background: #c4dff2;
+}
+.article-show, .news-show{
+    background: #ffffff;
+}
+.news-show .col-xs-12{
+    background: #ffffff;
+}
+.navbar-inner{
+    /*background: url("/img/nuicam/Pattern_Silver_302px.png");*/
+    background: url("/img/nuicam/Bg_Dropdownlist_302x302px.png");
+    background-repeat: repeat-x;
+}
+.navbar-default{
+    /*background: darkblue;*/
+}
+
+.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:hover, .navbar-default .navbar-nav>.open>a:focus {
+    /*color: #ffff00;*/
+    color: #ffffff;
+    background: none;
+}
+.navbar-default .navbar-nav>.open>a:hover {
+    color: #ffff00;
+}
+.navbar-nav li:hover > a{
+    color: #ffff00 !important;
+    background: none;
+}
+.navbar-nav li ul{
+    background: url("/img/nuicam/Bg_Dropdownlist_302x302px.png");
+}
+.dropdown-menu li:hover{
+    background: none;
+    color: red;
+}
+.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:hover, .navbar-default .navbar-nav>.active>a:focus {
+    color: #ffff00;
+    background: none;
+}
+.thumbnail{
+    margin: 0px;
+    /*margin-top: 10px;*/
+}
+.box-content .col-md-12{
+    border: none;
+}
+.open:hover a{
+    color: #ffffff;
+}
+.news-content .col-md-12{
+    border-top: 1px solid #0046ba;
+    padding-top: 5px;
+}
+.news-content .col-md-12{
+    margin-bottom: 10px;
+}
+
+.news-content div{
+    padding-left: 0px;
+    padding-right: 0px;
+}
+.news-content .preview-title{
+    margin-bottom: 5px;
+    padding-left: 10px;
+}
+.news-content .preview-title a{
+    color: #0046ba;
+    font-weight: bold;
+}
+.news-content .preview-content{
+    margin-bottom: 10px;
+    text-align: justify;
+    padding-left: 10px;
+}
+.news-content .read-more{
+    float: right;
+    font-weight: bold;
+    font-style: italic;
+}
+.page-title{
+    color: #0046ba;
+    font-weight: bold;
+    font-size: 1.5em;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.news-show{
+    padding-left: 30px;
+}
+.news-pagination{
+    text-align: center;
+}
+.news-pagination a, .news-pagination span{
+    color: #01AAD5;
+}
+.byline{
+    display: none;
+}
+.timestamp{
+    display: none;
+}
+.relative-post{
+    padding: 10px 0px 10px 15px;
+}
+.relative-post > div:first-child{
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #0046ba;
+    margin-top: 20px;
+}
+.relative-post > div:last-child ul{
+    padding-left: 0px;
+}
+.relative-post > div:last-child li{
+    list-style: none;
+    color: #01AAD5;
+}
+.relative-post > div:last-child li:before{
+    list-style: none;
+    content: '>';
+    margin: 0 1em 0 0;
+}
+.article_body{
+    margin-bottom: 20px;
+}
+.news-show .news-content{
+    background: #ffffff;
+}
+@media (max-width: 768px) {
+    #nav_desktop{
+        display: block;
+    }
+}
+/*
+#nav_desktop .navbar .nav > li{
+    display: webkit-block;
+}*/

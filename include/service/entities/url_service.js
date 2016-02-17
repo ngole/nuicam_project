@@ -104,6 +104,39 @@ module.exports = function UrlServiceModule(pb) {
         });
     };
 
+    UrlService.prototype.existsForTypeEn = function(params, cb) {
+        var url_en  = params.url_en;
+        var type = params.type;
+        var id   = params.id;
+        var site = params.site;
+
+        //validate required params
+        if (!url_en || !type) {
+            cb(new Error("The url and type parameters are required. URL=["+url_en+"] TYPE=["+type+"]"), false);
+            return;
+        }
+
+        //build pattern
+        if (url_en.charAt(0) === '/') {
+            url_en = url_en.substring(1);
+        }
+        if (url_en.charAt(url_en.length - 1) === '/') {
+            url_en = url_en.substring(0, url_en.length - 1);
+        }
+        var pattern = "^\\/{0,1}" + util.escapeRegExp(url_en) + "\\/{0,1}$";
+
+        //execute search
+        var where = {
+            url_en: new RegExp(pattern, 'g')
+        };
+        if (site !== undefined) {
+            where[pb.SiteService.SITE_FIELD] = site;
+        }
+        this.siteQueryService.unique(type, where, id, function(err, isUnique) {
+            cb(err, !isUnique);
+        });
+    };
+
     /**
      * Takes a variable set of arguments and joins them together to form a URL path.
      * @method urlJoin

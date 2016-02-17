@@ -49,8 +49,10 @@ module.exports = function SectionServiceModule(pb) {
         section: true,
         article: true,
         page: true,
-        link: true,
+        link: true
     };
+
+    var ALL_SECTION={};
 
     /**
      *
@@ -319,6 +321,8 @@ module.exports = function SectionServiceModule(pb) {
                 var formattedSections = [];
                 for(var i = 0; i < sectionMap.length; i++) {
                     var section    = SectionService.getSectionData(sectionMap[i].uid, sections, currUrl);
+                    //console.log(section);
+                    //console.log(localizationService);
                     if (util.isNullOrUndefined(section)) {
                         pb.log.error('SectionService: The navigation map is out of sync.  Root [%s] could not be found for site [%s].', sectionMap[i].uid, self.site);
                         continue;
@@ -350,6 +354,8 @@ module.exports = function SectionServiceModule(pb) {
                         }
                     }
                 }
+                ALL_SECTION = formattedSections;
+                //console.log(ALL_SECTION);
                 cb(null, formattedSections);
             });
         });
@@ -391,7 +397,7 @@ module.exports = function SectionServiceModule(pb) {
     SectionService.trimForType = function(navItem) {
         if (navItem.type === 'container') {
             navItem.parent = null;
-            navItem.url    = null;
+            //navItem.url    = null;
             navItem.editor = null;
             navItem.item   = null;
             navItem.link   = null;
@@ -755,7 +761,7 @@ module.exports = function SectionServiceModule(pb) {
                 SectionService.formatUrl(navItem);
 
                 //check for URL comparison
-                if (currUrl === navItem.url) {
+                if (currUrl === navItem.url){// || currUrl === navItem.link) {
                     navItem.active = true;
                 }
                 return navItem;
@@ -776,13 +782,16 @@ module.exports = function SectionServiceModule(pb) {
         }
         else if(navItem.url)
         {
-            navItem.url = pb.UrlService.urlJoin('/section', navItem.url);
+            navItem.url = pb.UrlService.urlJoin('/', navItem.url);
         }
         else if (navItem.type === 'article') {
-            navItem.url = pb.UrlService.urlJoin('/article', navItem.item);
+            navItem.url = pb.UrlService.urlJoin('/', navItem.item);
         }
         else if (navItem.type === 'page') {
             navItem.url = pb.UrlService.urlJoin('/page', navItem.item);
+        }
+        else if (navItem.type === 'container'){
+            navItem.url = pb.UrlService.urlJoin('/', navItem.item);
         }
         else {
             navItem.url = '#' + (navItem.name || '');
@@ -793,6 +802,10 @@ module.exports = function SectionServiceModule(pb) {
      * @static
      * @method
      * @param {Localization} ls
+
+
+
+
      * @return {array}
      */
     SectionService.getTypes = function(ls) {
@@ -837,6 +850,10 @@ module.exports = function SectionServiceModule(pb) {
 
         return VALID_TYPES[type] === true;
     };
+
+    SectionService.getMenu = function(){
+        return ALL_SECTION;
+    }
 
     //exports
     return SectionService;

@@ -1,23 +1,41 @@
                 <div class="container homepage-footer">
-                    <!--<footer class="homepage-footer">
+                    <div class="category-list container">
+                        <div class="row" style="padding-left: 5%; padding-right: 5%">
+                            <div class="col-sm-3 col-xs-3 col-lg-3">
+                                <img src="/img/nuicam/Icon_Photo_60px.png"><a href="#">THƯ VIỆN ẢNH</a>
+                            </div>
+                            <div class="col-sm-3 col-xs-3 col-lg-3">
+                                <img src="/img/nuicam/Icon_Video_60px.png"><a href="#">VIDEO</a>
+                            </div>
+                            <div class="col-sm-3 col-xs-3 col-lg-3">
+                                <img src="/img/nuicam/Icon_Music_60px.png"><a href="#">ÂM NHẠC</a>
+                            </div>
+                            <div class="col-sm-3 col-xs-3 col-lg-3">
+                                <img src="/img/nuicam/Icon_360_60px.png"><a href="#">NÚI CẤM 360</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
                         <p>BAN QUẢN LÝ KHU DU LỊCH NÚI CẤM</p>
                         <p>Bản quyền thuộc khu du lịch Núi Cấm, huyện Tịnh Biên, tỉnh An Giang</p>
                         <p>Địa chỉ: ấp An Hòa, xã An Hảo, huyện Tịnh Biên, tỉnh An Giang</p>
                         <p>Số điện thoại: 0763.760555</p>
                         <p>Email: banquanlykhudulichnuicam@gmail.com</p>
-                    </footer>-->
-                    <p>BAN QUẢN LÝ KHU DU LỊCH NÚI CẤM</p>
-                    <p>Bản quyền thuộc khu du lịch Núi Cấm, huyện Tịnh Biên, tỉnh An Giang</p>
-                    <p>Địa chỉ: ấp An Hòa, xã An Hảo, huyện Tịnh Biên, tỉnh An Giang</p>
-                    <p>Số điện thoại: 0763.760555</p>
-                    <p>Email: banquanlykhudulichnuicam@gmail.com</p>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <script type="text/javascript" src="/js/angular/controller/pencil-blue-controller.js"></script>
         <script>
             $('.carousel').carousel({
                 interval: 2000
             });
+            var app = angular.module('pencilblueApp',[]);
+
+            app.controller('PencilBlueController',['$scope',function($scope){
+                console.log('ssssssssssssss');
+            }]);
         </script>
     </body>
 </html>

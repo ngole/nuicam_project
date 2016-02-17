@@ -10,17 +10,26 @@
         ^tmp_angular=admin=elements=error_success^
 
         $scope.urlAvailable = null;
+        $scope.urlEnAvailable = null;
         $scope.urlGenerated = null;
+        $scope.urlEnGenerated = null;
 
         $scope.page.publish_date = $filter('date')($scope.page.publish_date || new Date(), 'MM-dd-yyyy HH:mm');
+        $scope.page.publish_date_en = $filter('date')($scope.page.publish_date_en || new Date(), 'MM-dd-yyyy HH:mm');
         $scope.page.page_media = $scope.page.page_media || [];
+        $scope.page.page_media_en = $scope.page.page_media_en || [];
         $scope.layout = $sce.trustAsHtml($scope.page.page_layout);
+        $scope.layout_en = $sce.trustAsHtml($scope.page.page_layout_en);
         $scope.page.meta_keywords = $scope.page.meta_keywords ? $scope.page.meta_keywords.join(', ') : '';
         $scope.editingObject = $scope.page;
         $scope.variablePrefix = 'page';
 
         $scope.setPublishDateToNow = function() {
             $scope.page.publish_date = $filter('date')(new Date(), 'MM-dd-yyyy HH:mm');;
+        };
+
+        $scope.setPublishDateEnToNow = function() {
+            $scope.page.publish_date_en = $filter('date')(new Date(), 'MM-dd-yyyy HH:mm');;
         };
 
         $scope.getUrlAvailability = function() {
@@ -33,8 +42,22 @@
             });
         };
 
+        $scope.getUrlEnAvailability = function() {
+            $http.get('/api/url/exists_for?url=' + $scope.page.url_en + '&type=page&' + $scope.siteKey + '=' + $scope.site)
+                    .success(function(result) {
+                        $scope.urlEnAvailable = !result.data;
+                    })
+                    .error(function(error, status) {
+                        $scope.errorMessage = error.message;
+                    });
+        };
+
         $scope.resetUrlAvailability = function() {
             $scope.urlAvailable = null;
+        };
+
+        $scope.resetUrlEnAvailability = function() {
+            $scope.urlEnAvailable = null;
         };
 
         $scope.savePage = function(draft) {
@@ -108,11 +131,17 @@
         $scope.getPageData = function(draft, cb) {
             var pageData = angular.copy($scope.page);
             pageData.publish_date = (new Date($filter('parsableDate')($scope.page.publish_date))).toISOString();
+            pageData.publish_date_en = (new Date($filter('parsableDate')($scope.page.publish_date_en))).toISOString();
             pageData.draft = draft ? 1 : 0;
 
             var media = [];
+            var media_en = [];
             for(var i = 0; i < $scope.page.page_media.length; i++) {
                 media.push($scope.page.page_media[i]._id.toString());
+            }
+
+            for(var i = 0; i < $scope.page.page_media_en.length; i++) {
+                media_en.push($scope.page.page_media_en[i]._id.toString());
             }
 
             var topics = [];
@@ -140,6 +169,7 @@
             pageData.page_media = media;
             pageData.page_topics = topics;
             pageData.page_layout = $scope.layout;
+            pageData.page_layout_en = $scope.layout_en;
 
             cb(pageData);
         };
@@ -154,9 +184,25 @@
 
         $scope.generateUrl = function(text) {
 			if (text) {
+                text = text.replace(/á|à|ả|ã|â|ă|ạ|ấ|ầ|ẩ|ẫ|ậ|ắ}ằ|ẳ|ẵ|ặ/gi,'a');
+                text = text.replace(/đ/gi, 'd');
+                text = text.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/gi, 'e');
+                text = text.replace(/ó|ò|ỏ|õ|ọ|ô|ơ|ố|ồ|ổ|ỗ|ộ|ớ|ờ|ở|ỡ|ợ/gi, 'o');
+                text = text.replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/gi, 'u');
 				return text.replace(/\s+/g, '-').toLowerCase();
 			}
 		};
+
+        $scope.generateUrlEn = function(text) {
+            if (text) {
+                text = text.replace(/á|à|ả|ã|â|ă|ạ|ấ|ầ|ẩ|ẫ|ậ|ắ}ằ|ẳ|ẵ|ặ/gi,'a');
+                text = text.replace(/đ/gi, 'd');
+                text = text.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/gi, 'e');
+                text = text.replace(/ó|ò|ỏ|õ|ọ|ô|ơ|ố|ồ|ổ|ỗ|ộ|ớ|ờ|ở|ỡ|ợ/gi, 'o');
+                text = text.replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/gi, 'u');
+                return text.replace(/\s+/g, '-').toLowerCase();
+            }
+        };
 
 		$scope.getUrl = function() {
 			$scope.page.url = $scope.generateUrl($scope.page.headline);
@@ -175,6 +221,24 @@
 				$scope.urlGenerated = false;
 			}
 		};
+
+        $scope.getUrlEn = function() {
+            $scope.page.url_en = $scope.generateUrlEn($scope.page.headline_en);
+
+            $http.get('/api/url/exists_for?url=' + $scope.page.url_en + '&type=page&' + $scope.siteKey + '=' + $scope.site)
+                    .success(function(result) {
+                        $scope.urlEnAvailable = !result.data;
+                    })
+                    .error(function(error, status) {
+                        $scope.errorMessage = error.message;
+                    });
+
+            if($scope.page.url_en && $scope.page.url_en.length) {
+                $scope.urlEnGenerated = true;
+            } else {
+                $scope.urlEnGenerated = false;
+            }
+        };
 
 		$scope.$watch('page.url', function(newVal, oldVal) {
 			if (newVal !== oldVal) {

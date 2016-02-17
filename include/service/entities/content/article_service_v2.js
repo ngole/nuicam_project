@@ -134,13 +134,18 @@ module.exports = function(pb) {
     ArticleServiceV2.format = function(context, cb) {
         var dto = context.data;
         dto.headline = BaseObjectService.sanitize(dto.headline);
+        dto.headline_en = BaseObjectService.sanitize(dto.headline_en);
         dto.subheading = BaseObjectService.sanitize(dto.subheading);
+        dto.subheading_en = BaseObjectService.sanitize(dto.subheading_en);
         dto.article_layout = BaseObjectService.sanitize(dto.article_layout, BaseObjectService.getContentSanitizationRules());
+        dto.article_layout_en = BaseObjectService.sanitize(dto.article_layout_en, BaseObjectService.getContentSanitizationRules());
         dto.focus_keyword = BaseObjectService.sanitize(dto.focus_keyword);
         dto.seo_title = BaseObjectService.sanitize(dto.seo_title);
         dto.meta_desc = BaseObjectService.sanitize(dto.meta_desc);
         dto.url = BaseObjectService.sanitize(dto.url);
+        dto.url_en = BaseObjectService.sanitize(dto.url_en);
         dto.publish_date = BaseObjectService.getDate(dto.publish_date);
+        dto.publish_date_en = BaseObjectService.getDate(dto.publish_date_en);
 
         if (util.isArray(dto.meta_keywords)) {
             for (var i = 0; i < dto.meta_keywords.length; i++) {
@@ -166,14 +171,18 @@ module.exports = function(pb) {
 
         obj.author = dto.author;
         obj.publish_date = dto.publish_date;
+        obj.publish_date_en = dto.publish_date_en;
         obj.meta_keywords = dto.meta_keywords;
         obj.article_media = dto.article_media;
         obj.article_sections = dto.article_sections;
         obj.article_topics = dto.article_topics;
         obj.url = dto.url;
+        obj.url_en = dto.url_en;
         obj.template = dto.template;
         obj.headline = dto.headline;
+        obj.headline_en = dto.headline_en;
         obj.subheading = dto.subheading;
+        obj.subheading_en = dto.subheading_en;
         obj.allow_comments = dto.allow_comments;
         obj.focus_keyword = dto.focus_keyword;
         obj.seo_title = dto.seo_title;
@@ -181,6 +190,7 @@ module.exports = function(pb) {
         obj.thumbnail = dto.thumbnail;
         obj.draft = dto.draft;
         obj.article_layout = dto.article_layout;
+        obj.article_layout_en = dto.article_layout_en;
 
         cb(null);
     };

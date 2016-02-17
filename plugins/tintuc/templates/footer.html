@@ -1,0 +1,29 @@
+                <div class="container homepage-footer">
+                    <p>BAN QUẢN LÝ KHU DU LỊCH NÚI CẤM</p>
+                    <p>Bản quyền thuộc khu du lịch Núi Cấm, huyện Tịnh Biên, tỉnh An Giang</p>
+                    <p>Địa chỉ: ấp An Hòa, xã An Hảo, huyện Tịnh Biên, tỉnh An Giang</p>
+                    <p>Số điện thoại: 0763.760555</p>
+                    <p>Email: banquanlykhudulichnuicam@gmail.com</p>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="/js/angular/controller/pencil-blue-controller.js"></script>
+        <script>
+            $(document).ready(function(){
+                $('.carousel').carousel({
+                    interval: 2000
+                });
+                $('.article').children().removeClass().addClass('col-md-12');
+                /*$(window).resize(function(){
+                    $('.bar').css('height',($('.article').children().height() + 10) + 'px');
+                });*/
+//                $('.bar').css('height',$('.article').children().height() + 'px');
+                var title = $('.article').children().children().first().text();
+                $('.article').children().children().first().remove();
+                $('.article').children().children().first().remove();
+                $('.article').children().children().first().before('<span>' + title + '</span>');
+            });
+        </script>
+    </body>
+</html>
