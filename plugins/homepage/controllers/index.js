@@ -68,7 +68,9 @@ module.exports = function IndexModule(pb) {
                     self.ts.registerLocal('meta_lang', self.ls.language);
                     self.ts.registerLocal('current_url', self.req.url);
                     self.ts.registerLocal('navigation', new pb.TemplateValue(data.nav.navigation, false));
+                    self.ts.registerLocal('navigation_en', new pb.TemplateValue(data.nav.navigation_en, false));
                     self.ts.registerLocal('account_buttons', new pb.TemplateValue(data.nav.accountButtons, false));
+                    //console.log(data.nav.navigation_en);
                     self.ts.registerLocal('infinite_scroll', function(flag, cb) {
                         if(article || page) {
                             cb(null, '');
@@ -205,8 +207,8 @@ module.exports = function IndexModule(pb) {
 
             //navigation
             nav: function(callback) {
-                self.getNavigation(function(themeSettings, navigation, accountButtons) {
-                    callback(null, {themeSettings: themeSettings, navigation: navigation, accountButtons: accountButtons});
+                self.getNavigation(function(themeSettings, navigation, navigation_en, accountButtons) {
+                    callback(null, {themeSettings: themeSettings, navigation: navigation, navigation_en: navigation_en, accountButtons: accountButtons});
                 });
             },
 
@@ -410,7 +412,7 @@ module.exports = function IndexModule(pb) {
             if (util.isError(err)) {
                 pb.log.error('Index: %s', err.stack);
             }
-            cb(navItems.themeSettings, navItems.navigation, navItems.accountButtons);
+            cb(navItems.themeSettings, navItems.navigation, navItems.navigation_en, navItems.accountButtons);
         });
     };
 

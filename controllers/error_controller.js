@@ -102,6 +102,7 @@ module.exports = function(pb) {
             var angularController = pb.ClientJs.getAngularController(
                 {
                     navigation: data.navItems.navigation,
+                    navigation_en: data.navItems.navigation_en,
                     contentSettings: data.contentSettings,
                     loggedIn: pb.security.isAuthenticated(self.session),
                     accountButtons: data.navItems.accountButtons
@@ -113,6 +114,7 @@ module.exports = function(pb) {
             var errStack = self.error && pb.config.logging.showErrors ? self.error.stack : '';
             var model = {
                 navigation: new pb.TemplateValue(data.navItems.navigation, false),
+                navigation_en: new pb.TemplateValue(data.navItems.navigation_en, false),
                 account_buttons: new pb.TemplateValue(data.navItems.accountButtons, false),
                 angular_objects: new pb.TemplateValue(angularController, false),
                 status: self.status,

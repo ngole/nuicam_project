@@ -58,7 +58,7 @@ module.exports = function(pb) {
 
                 //provide a dao
                 self.dao                   = new pb.DAO();
-
+                //console.log(cvlContext);
                 cb(null, true);
             });
         };
@@ -72,6 +72,7 @@ module.exports = function(pb) {
     SectionViewController.prototype.render = function(cb) {
         var self    = this;
         var custUrl = this.pathVars.customUrl;
+        //console.log(custUrl);
 
         this.getContent(custUrl, function(err, data) {
             if (util.isError(err)) {
@@ -84,6 +85,7 @@ module.exports = function(pb) {
             var options = {
                 section: data.section
             };
+            //console.log(data.section);
             self.contentViewLoader.render(data.content, options, function(err, html) {
                 if (util.isError(err)) {
                     return cb(err);
@@ -92,6 +94,7 @@ module.exports = function(pb) {
                 var result = {
                     content: html
                 };
+                //console.log(html);
                 cb(result);
             });
         });
@@ -124,6 +127,7 @@ module.exports = function(pb) {
                     section: section,
                     content: content
                 };
+                //console.log(result.content);
                 cb(err, result);
             });
         });

@@ -770,6 +770,25 @@ module.exports = function SectionServiceModule(pb) {
         return null;
     };
 
+    SectionService.getSectionDataEn = function(uid, navItems, currUrl){
+        var self = this;
+        //console.log(navItems);
+        for(var i = 0; i < navItems.length; i++) {
+
+            var navItem = navItems[i];
+            if(navItem[pb.DAO.getIdField()].toString() === uid) {
+                SectionService.formatUrlEn(navItem);
+                //console.log(navItem.name_en);
+                //check for URL comparison
+                if (currUrl === navItem.url_en){// || currUrl === navItem.link) {
+                    navItem.active = true;
+                }
+                return navItem;
+            }
+        }
+        return null;
+    };
+
     /**
      *
      * @static
@@ -779,22 +798,53 @@ module.exports = function SectionServiceModule(pb) {
     SectionService.formatUrl = function(navItem) {
         if (util.isString(navItem.link)) {
             navItem.url = navItem.link;
+            navItem.url_en = navItem.link_en;
         }
         else if(navItem.url)
         {
-            navItem.url = pb.UrlService.urlJoin('/', navItem.url);
+            navItem.url = pb.UrlService.urlJoin('/vn/', navItem.url);
+            if(navItem.url_en)
+                navItem.url_en = pb.UrlService.urlJoin('/en/', navItem.url_en);
         }
         else if (navItem.type === 'article') {
-            navItem.url = pb.UrlService.urlJoin('/', navItem.item);
+            navItem.url = pb.UrlService.urlJoin('/vn/', navItem.item);
+            if(navItem.url_en)
+                navItem.url_en = pb.UrlService.urlJoin('/en/', navItem.url_en);
         }
         else if (navItem.type === 'page') {
             navItem.url = pb.UrlService.urlJoin('/page', navItem.item);
+            if(navItem.url_en)
+                navItem.url_en = pb.UrlService.urlJoin('/page', navItem.url_en);
         }
         else if (navItem.type === 'container'){
             navItem.url = pb.UrlService.urlJoin('/', navItem.item);
+            if(navItem.url_en)
+                navItem.url_en = pb.UrlService.urlJoin('/', navItem.url_en);
         }
         else {
             navItem.url = '#' + (navItem.name || '');
+        }
+    };
+
+    SectionService.formatUrlEn = function(navItem) {
+        if (util.isString(navItem.link_en)) {
+            navItem.url_en = navItem.link_en;
+        }
+        else if(navItem.url_en)
+        {
+            navItem.url_en = pb.UrlService.urlJoin('/', navItem.url_en);
+        }
+        else if (navItem.type === 'article') {
+            navItem.url_en = pb.UrlService.urlJoin('/', navItem.item);
+        }
+        else if (navItem.type === 'page') {
+            navItem.url_en = pb.UrlService.urlJoin('/page', navItem.item);
+        }
+        else if (navItem.type === 'container'){
+            navItem.url_en = pb.UrlService.urlJoin('/', navItem.item);
+        }
+        else {
+            navItem.url_en = '#' + (navItem.name || '');
         }
     };
 

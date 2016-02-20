@@ -172,7 +172,7 @@ module.exports = function TopMenuServiceModule(pb) {
      * @param {Object}   accountButtons Account buttons object
      * @param {Function} cb             Callback function
      */
-    TopMenuService.getBootstrapNav = function(navigation, accountButtons, options, cb) {
+    TopMenuService.getBootstrapNav = function(navigation, navigation_en, accountButtons, options, cb) {
         if (util.isFunction(options)) {
             cb = options;
             options = {};
@@ -184,6 +184,7 @@ module.exports = function TopMenuServiceModule(pb) {
                 ts.load('elements/top_menu/account_button', function(err, accountButtonTemplate) {
 
                     var bootstrapNav = ' ';
+                    //console.log(navigation);
                     for(var i = 0; i < navigation.length; i++)
                     {
                         if(navigation[i].dropdown)
@@ -205,6 +206,7 @@ module.exports = function TopMenuServiceModule(pb) {
                             }
 
                             var dropdown = dropdownTemplate;
+                            dropdown = dropdown.split('^url^').join(navigation[i].url);
                             dropdown = dropdown.split('^navigation^').join(subNav);
                             dropdown = dropdown.split('^active^').join((navigation[i].active) ? 'active' : '');
                             dropdown = dropdown.split('^name^').join(navigation[i].name);
@@ -240,6 +242,78 @@ module.exports = function TopMenuServiceModule(pb) {
             });
         });
     };
+
+    TopMenuService.getBootstrapNavEn = function(navigation, accountButtons, options, cb) {
+        if (util.isFunction(options)) {
+            cb = options;
+            options = {};
+        }
+
+        var ts = new pb.TemplateService(options);
+        ts.load('elements/top_menu/link', function(err, linkTemplate) {
+            ts.load('elements/top_menu/dropdown', function(err, dropdownTemplate) {
+                ts.load('elements/top_menu/account_button', function(err, accountButtonTemplate) {
+
+                    var bootstrapNav = ' ';
+                    //console.log(navigation);
+                    for(var i = 0; i < navigation.length; i++)
+                    {
+                        if(navigation[i].dropdown)
+                        {
+                            var subNav = ' ';
+                            for(var j = 0; j < navigation[i].children.length; j++)
+                            {
+                                if(!navigation[i].children[j]) {
+                                    continue;
+                                }
+
+                                var childItem = linkTemplate;
+                                childItem = childItem.split('^active^').join((navigation[i].children[j].active) ? 'active' : '');
+                                childItem = childItem.split('^url^').join(navigation[i].children[j].url_en);
+                                childItem = childItem.split('^new_tab^').join(navigation[i].children[j].new_tab ? '_blank' : '_self');
+                                childItem = childItem.split('^name^').join(navigation[i].children[j].name_en);
+
+                                subNav = subNav.concat(childItem);
+                            }
+
+                            var dropdown = dropdownTemplate;
+                            dropdown = dropdown.split('^url^').join(navigation[i].url_en);
+                            dropdown = dropdown.split('^navigation^').join(subNav);
+                            dropdown = dropdown.split('^active^').join((navigation[i].active) ? 'active' : '');
+                            dropdown = dropdown.split('^name^').join(navigation[i].name_en);
+
+                            bootstrapNav = bootstrapNav.concat(dropdown);
+                        }
+                        else
+                        {
+                            var linkItem = linkTemplate;
+                            linkItem = linkItem.split('^active^').join((navigation[i].active) ? 'active' : '');
+                            linkItem = linkItem.split('^url^').join(navigation[i].url_en);
+                            linkItem = linkItem.split('^new_tab^').join(navigation[i].new_tab ? '_blank' : '');
+                            linkItem = linkItem.split('^name^').join(navigation[i].name_en);
+
+                            bootstrapNav = bootstrapNav.concat(linkItem);
+                        }
+                    }
+
+                    var buttons = ' ';
+                    for(i = 0; i < accountButtons.length; i++)
+                    {
+                        var button = accountButtonTemplate;
+                        button = button.split('^active^').join((accountButtons[i].active) ? 'active' : '');
+                        button = button.split('^url^').join(accountButtons[i].href);
+                        button = button.split('^title^').join(accountButtons[i].title);
+                        button = button.split('^icon^').join(accountButtons[i].icon);
+
+                        buttons = buttons.concat(button);
+                    }
+
+                    cb(bootstrapNav, buttons);
+
+                });
+            });
+        });
+    };
     
     /**
      * @method getNavItems
@@ -252,13 +326,18 @@ module.exports = function TopMenuServiceModule(pb) {
      */
     TopMenuService.prototype.getNavItems = function(options, cb) {
         TopMenuService.getTopMenu(options.session, options.ls, options, function(themeSettings, navigation, accountButtons) {
-            TopMenuService.getBootstrapNav(navigation, accountButtons, options, function(navigation, accountButtons) {
-                var navItems = {
-                    themeSettings: themeSettings,
-                    navigation: navigation,
-                    accountButtons: accountButtons
-                };
-                cb(null, navItems);
+            //console.log(navigation);
+            TopMenuService.getBootstrapNavEn(navigation, accountButtons, options, function(navigation_en, accountButtons){
+                TopMenuService.getBootstrapNav(navigation, accountButtons, options, function(navigation_vn, accountButtons) {
+                    var navItems = {
+                        themeSettings: themeSettings,
+                        navigation: navigation_vn,
+                        navigation_en: navigation_en,
+                        accountButtons: accountButtons
+                    };
+                    //console.log(navigation);
+                    cb(null, navItems);
+                });
             });
         });
     };
