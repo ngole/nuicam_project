@@ -509,7 +509,7 @@ module.exports = function Routes(pb){
             access_level: pb.SecurityService.ACCESS_WRITER,
             auth_required: true,
             inactive_site_access: true,
-            controller: path.join(pb.config.docRoot, 'plugins', 'pencilblue', 'controllers', 'admin', 'content', 'articles', 'manage_articles.js'),
+            controller: path.join(pb.config.docRoot, 'plugins', 'homepage', 'controllers', 'admin', 'content', 'articles', 'manage_articles.js'),
             content_type: 'text/html'
         },
         {

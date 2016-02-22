@@ -109,7 +109,7 @@ module.exports = function(pb) {
         var self = this;
 
         //lookup by URL
-        self.dao.loadByValue('url', custUrl, 'section', function(err, section) {
+        self.dao.loadByValue('url_en', custUrl, 'section', function(err, section) {
             if (util.isError(err) || section == null) {
                 return cb(null, null);
             }
@@ -126,7 +126,7 @@ module.exports = function(pb) {
                     section: section,
                     content: content
                 };
-                //console.log(result.content);
+                //console.log(result);
                 cb(err, result);
             });
         });

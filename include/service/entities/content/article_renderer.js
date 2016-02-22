@@ -89,15 +89,17 @@ module.exports = function(pb) {
             this.formatTimestamp(content, context);
         }
         //console.log(context.contentSettings.read_more_text == 'Read more');
+        //build out task list
+        this.formatLayout(content, context);
         if(context.contentSettings.read_more_text === 'Read more') {
-            this.formatLayoutEn(content, context);
+            //this.formatLayoutEn(content, context);
 
             //build out task list
             var tasks = [
                 util.wrapTask(this, this.formatMediaReferencesEn, [content, context])
             ];
         }else{
-            this.formatLayout(content, context);
+
 
             //build out task list
             var tasks = [
