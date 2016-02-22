@@ -51,6 +51,7 @@ module.exports = function(pb) {
         this.hostname = context.hostname;
         this.onlyThisSite = context.onlyThisSite;
         this.activeTheme = context.activeTheme;
+        //console.log(context);
     };
 
     /**
@@ -85,7 +86,6 @@ module.exports = function(pb) {
      */
     ContentViewLoader.prototype.render = function(contentArray, options, cb) {
         var self = this;
-
         this.gatherData(contentArray, options, function(err, data) {
             if (util.isError(err)) {
                 return cb(err);
@@ -94,6 +94,7 @@ module.exports = function(pb) {
             self.setMetaInfo(data.meta, options);
             self.ts.registerLocal('current_url', self.req.url);
             self.ts.registerLocal('navigation', new pb.TemplateValue(data.nav.navigation, false));
+            self.ts.registerLocal('navigation_en', new pb.TemplateValue(data.nav.navigation_en, false));
             self.ts.registerLocal('account_buttons', new pb.TemplateValue(data.nav.accountButtons, false));
             self.ts.registerLocal('infinite_scroll', function(flag, cb) {
                 self.onInfiniteScroll(contentArray, options, cb);
@@ -108,6 +109,41 @@ module.exports = function(pb) {
                 self.onContent(contentArray, options, cb);
             });
 
+            self.getTemplate(contentArray, options, function(err, template) {
+                if (util.isError(err)) {
+                    return cb(err);
+                }
+
+                self.ts.load(template, cb);
+            });
+        });
+    };
+
+    ContentViewLoader.prototype.render_en = function(contentArray, options, cb) {
+        var self = this;
+        this.gatherData(contentArray, options, function(err, data) {
+            if (util.isError(err)) {
+                return cb(err);
+            }
+
+            self.setMetaInfo(data.meta, options);
+            self.ts.registerLocal('current_url', self.req.url);
+            self.ts.registerLocal('navigation', new pb.TemplateValue(data.nav.navigation, false));
+            self.ts.registerLocal('navigation_en', new pb.TemplateValue(data.nav.navigation_en, false));
+            self.ts.registerLocal('account_buttons', new pb.TemplateValue(data.nav.accountButtons, false));
+            self.ts.registerLocal('infinite_scroll', function(flag, cb) {
+                self.onInfiniteScroll(contentArray, options, cb);
+            });
+            self.ts.registerLocal('page_name', function(flag, cb) {
+                self.onPageName(contentArray, options, cb);
+            });
+            self.ts.registerLocal('angular', function(flag, cb) {
+                self.onAngular(contentArray, options, cb);
+            });
+            self.ts.registerLocal('articles', function(flag, cb) {
+                self.onContentEn(contentArray, options, cb);
+            });
+            //console.log(contentArray);
             self.getTemplate(contentArray, options, function(err, template) {
                 if (util.isError(err)) {
                     return cb(err);
@@ -212,6 +248,23 @@ module.exports = function(pb) {
                     return callback(null, '');
                 }
                 self.renderContent(contentArray[i], options, callback);
+            };
+        });
+        async.series(tasks, function(err, content) {
+            cb(err, new pb.TemplateValue(content.join(''), false));
+        });
+    };
+
+    ContentViewLoader.prototype.onContentEn = function(contentArray, options, cb) {
+        var self  = this;
+        var limit = Math.min(this.contentSettings.articles_per_page, contentArray.length);
+
+        var tasks = util.getTasks(contentArray, function(contentArray, i) {
+            return function(callback) {
+                if (i >= limit) {
+                    return callback(null, '');
+                }
+                self.renderContentEn(contentArray[i], options, callback);
             };
         });
         async.series(tasks, function(err, content) {
@@ -416,6 +469,56 @@ module.exports = function(pb) {
         options.contentIndex++;
     };
 
+    ContentViewLoader.prototype.renderContentEn = function(content, options, cb) {
+        var self = this;
+
+        //set recurring params
+        if (util.isNullOrUndefined(options.contentIndex)) {
+            options.contentIndex = 0;
+        }
+
+        var isPage           = this.service.getType() === 'page';
+        var showByLine       = this.contentSettings.display_bylines && !isPage;
+        var showTimestamp    = this.contentSettings.display_timestamp && !isPage;
+        var ats              = self.ts.getChildInstance();
+        var contentUrlPrefix = '/' + this.service.getType() + '/';
+        self.ts.reprocess = false;
+        ats.registerLocal('article_permalink', function(flag, cb) {
+            self.onContentPermalink(content, options, cb);
+        });
+        ats.registerLocal('article_headline', function(flag, cb) {
+            self.onContentHeadlineEn(content, options, cb);
+        });
+        ats.registerLocal('article_headline_nolink', content.headline_en);
+        ats.registerLocal('article_subheading', ContentViewLoader.valOrEmpty(content.subheading_en));
+        ats.registerLocal('article_subheading_display', ContentViewLoader.getDisplayAttr(content.subheading_en));
+        ats.registerLocal('article_id', content[pb.DAO.getIdField()] + '');
+        ats.registerLocal('article_index', options.contentIndex);
+        ats.registerLocal('article_timestamp', showTimestamp && content.timestamp ? content.timestamp : '');
+        ats.registerLocal('article_timestamp_display', ContentViewLoader.getDisplayAttr(showTimestamp));
+        ats.registerLocal('article_layout', new pb.TemplateValue(content.layout, false));
+        ats.registerLocal('article_url', content.url_en);
+        ats.registerLocal('display_byline', ContentViewLoader.getDisplayAttr(showByLine));
+        ats.registerLocal('author_photo', ContentViewLoader.valOrEmpty(content.author_photo));
+        ats.registerLocal('author_photo_display', ContentViewLoader.getDisplayAttr(content.author_photo));
+        ats.registerLocal('author_name', ContentViewLoader.valOrEmpty(content.author_name));
+        ats.registerLocal('author_position', ContentViewLoader.valOrEmpty(content.author_position));
+        ats.registerLocal('media_body_style', ContentViewLoader.valOrEmpty(content.media_body_style));
+        ats.registerLocal('comments', function(flag, cb) {
+            if (isPage || !pb.ArticleService.allowComments(self.contentSettings, content)) {
+                return cb(null, '');
+            }
+
+            var ts = ats.getChildInstance();
+            self.renderCommentsEn(content, ts, function(err, comments) {
+                cb(err, new pb.TemplateValue(comments, false));
+            });
+        });
+        ats.load(self.getDefaultContentTemplatePath(), cb);
+
+        options.contentIndex++;
+    };
+
     /**
      *
      * @method getDefaultContentTemplatePath
@@ -438,6 +541,52 @@ module.exports = function(pb) {
         if(pb.security.isAuthenticated(this.session)) {
             commentingUser = pb.CommentService.getCommentingUser(this.session.authentication.user);
         }
+        ts.registerLocal('COMMENTS', 'Bình Luận');
+        ts.registerLocal('SUBMIT_COMMENT', 'Nhập Bình Luận');
+        ts.registerLocal('COMMENT_ERROR', 'Đã xảy ra lỗi khi đăng bình luận.');
+        ts.registerLocal('SUBMIT', 'Đăng Bình Luận');
+        ts.registerLocal('LOGIN_TO_COMMENT', 'Vui lòng đăng nhập để bình luận');
+
+        ts.registerLocal('user_photo', function(flag, cb) {
+            self.onCommentingUserPhoto(content, commentingUser, cb);
+        });
+        ts.registerLocal('user_position', function(flag, cb) {
+            self.onCommentingUserPosition(content, commentingUser, cb);
+        });
+        ts.registerLocal('user_name', commentingUser ? commentingUser.name : '');
+        ts.registerLocal('display_submit', commentingUser ? 'block' : 'none');
+        ts.registerLocal('display_login', commentingUser ? 'none' : 'block');
+        ts.registerLocal('comments_length', util.isArray(content.comments) ? content.comments.length : 0);
+        ts.registerLocal('individual_comments', function(flag, cb) {
+            if (!util.isArray(content.comments) || content.comments.length == 0) {
+                return cb(null, '');
+            }
+
+            var tasks = util.getTasks(content.comments, function(comments, i) {
+                return function(callback) {
+
+                    var cts = ts.getChildInstance();
+                    self.renderComment(comments[i], cts, callback);
+                };
+            });
+            async.parallel(tasks, function(err, results) {
+                cb(err, new pb.TemplateValue(results.join(''), false));
+            });
+        });
+        ts.load(self.getDefaultCommentsTemplatePath(), cb);
+    };
+
+    ContentViewLoader.prototype.renderCommentsEn = function(content, ts, cb) {
+        var self           = this;
+        var commentingUser = null;
+        if(pb.security.isAuthenticated(this.session)) {
+            commentingUser = pb.CommentService.getCommentingUser(this.session.authentication.user);
+        }
+        ts.registerLocal('COMMENTS', 'Comments');
+        ts.registerLocal('SUBMIT_COMMENT', 'Submit Comment');
+        ts.registerLocal('COMMENT_ERROR', 'Comment Error');
+        ts.registerLocal('SUBMIT', 'Submit');
+        ts.registerLocal('LOGIN_TO_COMMENT', 'Login To Comment');
 
         ts.registerLocal('user_photo', function(flag, cb) {
             self.onCommentingUserPhoto(content, commentingUser, cb);
@@ -559,6 +708,12 @@ module.exports = function(pb) {
         cb(null, val);
     };
 
+    ContentViewLoader.prototype.onContentHeadlineEn = function(content, options, cb) {
+        var url = this.createContentPermalinkEn(content);
+        var val = new pb.TemplateValue('<a href="' + url + '">' + HtmlEncoder.htmlEncode(content.headline_en) + '</a>', false);
+        cb(null, val);
+    };
+
     /**
      *
      * @method createContentPermalink
@@ -568,6 +723,11 @@ module.exports = function(pb) {
     ContentViewLoader.prototype.createContentPermalink = function(content) {
         var prefix = '/' + this.service.getType();
         return pb.UrlService.createSystemUrl(pb.UrlService.urlJoin(prefix, content.url), { hostname: this.hostname });
+    };
+
+    ContentViewLoader.prototype.createContentPermalinkEn = function(content) {
+        var prefix = '/' + this.service.getType();
+        return pb.UrlService.createSystemUrl(pb.UrlService.urlJoin(prefix, content.url_en), { hostname: this.hostname });
     };
 
     /**

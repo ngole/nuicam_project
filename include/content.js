@@ -58,7 +58,8 @@ module.exports = function(pb) {
     var DEFAULT_SETTINGS = Object.freeze({
         articles_per_page: 5,
         auto_break_articles: 0,
-        read_more_text: 'Read more',
+        read_more_text: 'Xem thêm',
+        read_more_text_en: 'Read more',
         display_timestamp: 1,
         date_format: 'M dd, YYYY',
         two_digit_date: 0,
@@ -134,6 +135,19 @@ module.exports = function(pb) {
         return ContentService.getTimestampText(options);
     };
 
+    ContentService.getTimestampTextFromSettingsEn = function(date, contentSettings, ls) {
+        var options = {
+            date: date,
+            format: contentSettings.date_format,
+            twoDigitDate: contentSettings.two_digit_date,
+            displayTime: contentSettings.display_hours_minutes,
+            timeFormat: contentSettings.time_format,
+            twoDigitTime: contentSettings.two_digit_time,
+            ls: ls
+        };
+        return ContentService.getTimestampTextEn(options);
+    };
+
     /**
      * 
      * @static
@@ -161,18 +175,85 @@ module.exports = function(pb) {
 
         var dateString = format;
         var monthNames = [
-          ls.get('JAN'),
-          ls.get('FEB'),
-          ls.get('MAR'),
-          ls.get('APR'),
-          ls.get('MAY'),
-          ls.get('JUN'),
-          ls.get('JUL'),
-          ls.get('AUG'),
-          ls.get('SEP'),
-          ls.get('OCT'),
-          ls.get('NOV'),
-          ls.get('DEC')
+            ls.get('JAN'),
+            ls.get('FEB'),
+            ls.get('MAR'),
+            ls.get('APR'),
+            ls.get('MAY'),
+            ls.get('JUN'),
+            ls.get('JUL'),
+            ls.get('AUG'),
+            ls.get('SEP'),
+            ls.get('OCT'),
+            ls.get('NOV'),
+            ls.get('DEC')
+        ];
+
+        var month = date.getMonth() + 1;
+        var day   = date.getDate();
+
+        month = (twoDigitDate && month < 10) ? '0' + month : month.toString();
+        day   = (twoDigitDate && day < 10) ? '0' + day : day.toString();
+
+        dateString = dateString.split('YYYY').join(date.getFullYear());
+        dateString = dateString.split('yy').join(date.getYear());
+        dateString = dateString.split('M').join(monthNames[date.getMonth()]);
+        dateString = dateString.split('mm').join(month);
+        dateString = dateString.split('dd').join(day);
+
+        if (typeof displayTime !== 'undefined' && displayTime) {
+
+            var hours   = date.getHours();
+            var minutes = date.getMinutes();
+            if(minutes < 10) {
+                minutes = '0' + minutes;
+            }
+            var ampm = '';
+
+            if(timeFormat == '12') {
+                if(hours > 12) {
+                    hours -= 12;
+                    ampm = ' '+ls.get('TIME_PM');
+                }
+                else {
+                    ampm = ' '+ls.get('TIME_AM');
+                }
+            }
+            if(twoDigitTime && hours < 10) {
+                hours = '0' + hours;
+            }
+
+            dateString = dateString.concat(' ' + hours + ':' + minutes + ampm);
+        }
+        return dateString;
+    };
+
+    ContentService.getTimestampTextEn = function(options) {
+        var date         = options.date;
+        var format       = options.format;
+        var twoDigitDate = options.twoDigitDate;
+        var displayTime  = options.displayTime;
+        var timeFormat   = options.timeFormat;
+        var twoDigitTime = options.twoDigitTime;
+        var ls           = options.ls;
+        if (!ls) {
+            ls = new pb.Localization();
+        }
+
+        var dateString = format;
+        var monthNames = [
+            ls.get('JAN_EN'),
+            ls.get('FEB_EN'),
+            ls.get('MAR_EN'),
+            ls.get('APR_EN'),
+            ls.get('MAY_EN'),
+            ls.get('JUN_EN'),
+            ls.get('JUL_EN'),
+            ls.get('AUG_EN'),
+            ls.get('SEP_EN'),
+            ls.get('OCT_EN'),
+            ls.get('NOV_EN'),
+            ls.get('DEC_EN')
         ];
 
         var month = date.getMonth() + 1;

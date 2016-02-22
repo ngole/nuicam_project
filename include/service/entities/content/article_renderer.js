@@ -37,6 +37,7 @@ module.exports = function(pb) {
         }
         this.site = pb.SiteService.getCurrentSite(context.site);
         this.onlyThisSite = context.onlyThisSite;
+        //console.log(context);
     }
 
     /**
@@ -47,6 +48,7 @@ module.exports = function(pb) {
      * @type {String}
      */
     var READ_MORE_FLAG = '^read_more^';
+    var READ_MORE_FLAG_EN = '^read_more_en^';
 
     /**
      * @method render
@@ -86,12 +88,22 @@ module.exports = function(pb) {
         if (context.renderTimestamp !== false) {
             this.formatTimestamp(content, context);
         }
-        this.formatLayout(content, context);
+        //console.log(context.contentSettings.read_more_text == 'Read more');
+        if(context.contentSettings.read_more_text === 'Read more') {
+            this.formatLayoutEn(content, context);
 
-        //build out task list
-        var tasks = [
-            util.wrapTask(this, this.formatMediaReferences, [content, context])
-        ];
+            //build out task list
+            var tasks = [
+                util.wrapTask(this, this.formatMediaReferencesEn, [content, context])
+            ];
+        }else{
+            this.formatLayout(content, context);
+
+            //build out task list
+            var tasks = [
+                util.wrapTask(this, this.formatMediaReferences, [content, context])
+            ];
+        }
 
         //render comments unless explicitly asked not too
         if (context.renderComments !== false) {
@@ -160,6 +172,17 @@ module.exports = function(pb) {
         }
     };
 
+    ArticleRenderer.prototype.formatLayoutEn = function(content, context) {
+        var contentSettings = context.contentSettings;
+
+        if(this.containsReadMoreFlagEn(content)) {
+            this.formatLayoutForReadMoreEn(content, context);
+        }
+        else if(context.readMore && contentSettings.auto_break_articles) {
+            this.formatAutoBreaksEn(content, context);
+        }
+    };
+
     /**
      * @method formatMediaReferences
      * @param {Object} content
@@ -170,6 +193,18 @@ module.exports = function(pb) {
         var self = this;
 
         content.layout  = this.getLayout(content);
+        var mediaLoader = new pb.MediaLoader({site: self.site, onlyThisSite: self.onlyThisSite});
+        mediaLoader.start(content.layout, function(err, newLayout) {
+            content.layout = newLayout;
+            self.setLayout(content, undefined);
+            cb(err);
+        });
+    };
+
+    ArticleRenderer.prototype.formatMediaReferencesEn = function(content, context, cb) {
+        var self = this;
+
+        content.layout  = this.getLayoutEn(content);
         var mediaLoader = new pb.MediaLoader({site: self.site, onlyThisSite: self.onlyThisSite});
         mediaLoader.start(content.layout, function(err, newLayout) {
             content.layout = newLayout;
@@ -337,6 +372,65 @@ module.exports = function(pb) {
         }
     };
 
+    ArticleRenderer.prototype.formatAutoBreaksEn = function(content, context) {
+        var contentSettings = context.contentSettings;
+        var breakString = '<br>';
+        var tempLayout;
+        var layout = this.getLayoutEn(content);
+
+        // Firefox uses br and Chrome uses div in content editables.
+        // We need to see which one is being used
+        var brIndex = layout.indexOf('<br>');
+        if(brIndex === -1) {
+            brIndex = layout.indexOf('<br />');
+            breakString = '<br />';
+        }
+        var divIndex = layout.indexOf('</div>');
+
+        // Temporarily replace double breaks with a directive so we don't mess up the count
+        if(divIndex === -1 || (brIndex > -1 && divIndex > -1 && brIndex < divIndex)) {
+            tempLayout = layout.split(breakString + breakString).join(breakString + '^dbl_pgf_break^');
+        }
+        else {
+            breakString = '</div>';
+            tempLayout = layout.split('<div><br></div>').join(breakString + '^dbl_pgf_break^')
+                .split('<div><br /></div>').join(breakString + '^dbl_pgf_break^');
+        }
+
+        // Split the layout by paragraphs and remove any empty indices
+        var tempLayoutArray = tempLayout.split(breakString);
+        for(var i = 0; i < tempLayoutArray.length; i++) {
+            if(!tempLayoutArray[i].length) {
+                tempLayoutArray.splice(i, 1);
+                i--;
+            }
+        }
+
+        // Only continue if we have more than 1 paragraph
+        if(tempLayoutArray.length > 1) {
+            var newLayout = '';
+
+            // Cutoff the content at the right number of paragraphs
+            for(i = 0; i < tempLayoutArray.length && i < contentSettings.auto_break_articles; i++) {
+                if(i === contentSettings.auto_break_articles - 1 && i != tempLayoutArray.length - 1) {
+
+                    newLayout += tempLayoutArray[i] + this.getReadMoreSpanEn(content, contentSettings.read_more_text) + breakString;
+                    continue;
+                }
+                newLayout += tempLayoutArray[i] + breakString;
+            }
+
+            if(breakString === '</div>') {
+                breakString = '<div><br /></div>';
+            }
+
+            // Replace the double breaks
+            newLayout = newLayout.split('^dbl_pgf_break^').join(breakString);
+
+            this.setLayoutEn(content, newLayout);
+        }
+    };
+
     /**
      * @method formatLayoutForReadMore
      * @param {Object} content
@@ -355,6 +449,19 @@ module.exports = function(pb) {
         this.setLayout(content, layout);
     };
 
+    ArticleRenderer.prototype.formatLayoutForReadMoreEn = function(content, context) {
+        var layout = this.getLayoutEn(content);
+
+        if(context.readMore) {
+            var beforeReadMore = layout.substr(0, layout.indexOf(READ_MORE_FLAG));
+            layout = beforeReadMore + this.getReadMoreSpanEn(content, context.contentSettings.read_more_text);
+        }
+        else {
+            layout = layout.split(READ_MORE_FLAG).join('');
+        }
+        this.setLayoutEn(content, layout);
+    };
+
     /**
      *
      * @method getReadMoreSpan
@@ -364,6 +471,10 @@ module.exports = function(pb) {
      */
     ArticleRenderer.prototype.getReadMoreSpan = function(content, anchorContent) {
         return '&nbsp;<span class="read_more">' + this.getReadMoreLink(content, anchorContent) + '</span>';
+    };
+
+    ArticleRenderer.prototype.getReadMoreSpanEn = function(content, anchorContent) {
+        return '&nbsp;<span class="read_more">' + this.getReadMoreLinkEn(content, anchorContent) + '</span>';
     };
 
     /**
@@ -378,11 +489,21 @@ module.exports = function(pb) {
         return '<a href="' + pb.UrlService.createSystemUrl(path, { hostname: this.hostname }) + '">' + anchorContent + '</a>';
     };
 
+    ArticleRenderer.prototype.getReadMoreLinkEn = function(content, anchorContent) {
+
+        var path = pb.UrlService.urlJoin(this.getContentLinkPrefixEn() + content.url);
+        return '<a href="' + pb.UrlService.createSystemUrl(path, { hostname: this.hostname }) + '">' + anchorContent + '</a>';
+    };
+
     /**
      * @method getContentLinkPrefix
      * @return {String}
      */
     ArticleRenderer.prototype.getContentLinkPrefix = function() {
+        return '/article/';
+    };
+
+    ArticleRenderer.prototype.getContentLinkPrefixEn = function() {
         return '/article/';
     };
 
@@ -397,6 +518,10 @@ module.exports = function(pb) {
         return content.article_layout;
     };
 
+    ArticleRenderer.prototype.getLayoutEn = function(content) {
+        return content.article_layout_en;
+    };
+
     /**
      * A workaround to allow this prototype to operate on articles and pages.
      * The layout parameter is not the same.  Until we introduce breaking
@@ -406,6 +531,10 @@ module.exports = function(pb) {
      * @param {String} layout
      */
     ArticleRenderer.prototype.setLayout = function(content, layout) {
+        content.article_layout = layout;
+    };
+
+    ArticleRenderer.prototype.setLayoutEn = function(content, layout) {
         content.article_layout = layout;
     };
 
@@ -419,6 +548,13 @@ module.exports = function(pb) {
             throw new Error('The content parameter must be an object');
         }
         return this.getLayout(content).indexOf(READ_MORE_FLAG) > -1;
+    };
+
+    ArticleRenderer.prototype.containsReadMoreFlagEn = function(content) {
+        if (!util.isObject(content)) {
+            throw new Error('The content parameter must be an object');
+        }
+        return this.getLayoutEn(content).indexOf(READ_MORE_FLAG) > -1;
     };
 
     return ArticleRenderer;

@@ -26,15 +26,15 @@ module.exports = function(pb) {
      * @constructor
      * @extends BaseController
      */
-    function SectionViewController(){}
-    util.inherits(SectionViewController, pb.BaseController);
+    function SectionEnViewController(){}
+    util.inherits(SectionEnViewController, pb.BaseController);
 
     /**
      * @method init
      * @param {Object} content
      * @param {Function} cb
      */
-    SectionViewController.prototype.init = function(context, cb) {
+    SectionEnViewController.prototype.init = function(context, cb) {
         var self = this;
         var init = function(err) {
             //get content settings
@@ -45,7 +45,6 @@ module.exports = function(pb) {
                     return cb(err);
                 }
                 //create the service
-                contentSettings.read_more_text = 'Xem thêm';
                 self.contentSettings = contentSettings;
                 var asContext = self.getServiceContext();
                 asContext.contentSettings = contentSettings;
@@ -59,21 +58,20 @@ module.exports = function(pb) {
 
                 //provide a dao
                 self.dao                   = new pb.DAO();
-                //console.log(cvlContext);
+
                 cb(null, true);
             });
         };
-        SectionViewController.super_.prototype.init.apply(this, [context, init]);
+        SectionEnViewController.super_.prototype.init.apply(this, [context, init]);
     };
 
     /**
      * @method render
      * @param {Function} cb
      */
-    SectionViewController.prototype.render = function(cb) {
+    SectionEnViewController.prototype.render = function(cb) {
         var self    = this;
         var custUrl = this.pathVars.customUrl;
-        //console.log(custUrl);
 
         this.getContent(custUrl, function(err, data) {
             if (util.isError(err)) {
@@ -86,7 +84,6 @@ module.exports = function(pb) {
             var options = {
                 section: data.section
             };
-            //console.log(options);
             self.contentViewLoader.render(data.content, options, function(err, html) {
                 if (util.isError(err)) {
                     return cb(err);
@@ -95,7 +92,6 @@ module.exports = function(pb) {
                 var result = {
                     content: html
                 };
-                //console.log(html);
                 cb(result);
             });
         });
@@ -107,7 +103,7 @@ module.exports = function(pb) {
      * @param {String} custUrl The URL slug of the section
      * @param {Function} cb
      */
-    SectionViewController.prototype.getContent = function(custUrl, cb) {
+    SectionEnViewController.prototype.getContent = function(custUrl, cb) {
         var self = this;
 
         //lookup by URL
@@ -128,12 +124,12 @@ module.exports = function(pb) {
                     section: section,
                     content: content
                 };
-                //console.log(result.content);
+                console.log(result);
                 cb(err, result);
             });
         });
     };
 
     //exports
-    return SectionViewController;
+    return SectionEnViewController;
 };

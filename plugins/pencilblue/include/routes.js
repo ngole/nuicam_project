@@ -139,6 +139,23 @@ module.exports = function Routes(pb){
         },
         {
             method: 'get',
+            path: "/vn/:customUrl",
+            //access_level: 0,
+            auth_required: false,
+            controller: path.join(pb.config.docRoot, 'plugins', 'giaodienbaiviet', 'controllers', 'section.js'),
+            content_type: 'text/html',
+            localization: true
+        },
+        {
+            method: 'get',
+            path: "/en/:customUrl",
+            auth_required: false,
+            controller: path.join(pb.config.docRoot, 'plugins', 'giaodienbaiviet', 'controllers', 'section_en.js'),
+            content_type: 'text/html',
+            localization: true
+        },
+        {
+            method: 'get',
             path: "/preview/:type/:id",
             access_level: pb.SecurityService.ACCESS_WRITER,
             auth_required: true,
@@ -234,7 +251,7 @@ module.exports = function Routes(pb){
             method: 'get',
             path: "/article/:customUrl",
             auth_required: false,
-            controller: path.join(pb.config.docRoot, 'plugins', 'pencilblue', 'controllers', 'article.js'),
+            controller: path.join(pb.config.docRoot, 'plugins', 'giaodienbaiviet', 'controllers', 'article.js'),
             content_type: 'text/html',
             localization: true
         },
