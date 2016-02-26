@@ -277,7 +277,6 @@ module.exports = function ArticleServiceModule(pb) {
                   contentSettings
                 );
             }
-
             if(article.article_layout.indexOf('^read_more^') > -1) {
                 if(articleCount > 1) {
                     article.article_layout = article.article_layout.substr(0, article.article_layout.indexOf('^read_more^')) + ' <a href="' + pb.config.siteRoot + '/article/' + article.url + '">' + contentSettings.read_more_text + '...</a>';
@@ -376,7 +375,6 @@ module.exports = function ArticleServiceModule(pb) {
             }
         });
     };
-
     /**
      * Retrieves the authors of an array of articles
      *

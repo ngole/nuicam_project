@@ -88,22 +88,18 @@ module.exports = function(pb) {
         if (context.renderTimestamp !== false) {
             this.formatTimestamp(content, context);
         }
-        //console.log(context.contentSettings.read_more_text == 'Read more');
-        //build out task list
-        this.formatLayout(content, context);
-        if(context.contentSettings.read_more_text === 'Read more') {
-            //this.formatLayoutEn(content, context);
 
-            //build out task list
-            var tasks = [
-                util.wrapTask(this, this.formatMediaReferencesEn, [content, context])
-            ];
-        }else{
-
-
+        if(context.contentSettings.read_more_text === 'Xem thêm') {
+            this.formatLayout(content, context);
             //build out task list
             var tasks = [
                 util.wrapTask(this, this.formatMediaReferences, [content, context])
+            ];
+        }else{
+            this.formatLayoutEn(content, context);
+            //build out task list
+            var tasks = [
+                util.wrapTask(this, this.formatMediaReferencesEn, [content, context])
             ];
         }
         //render comments unless explicitly asked not too
@@ -169,6 +165,7 @@ module.exports = function(pb) {
         }
         else if(context.readMore && contentSettings.auto_break_articles) {
             this.formatAutoBreaks(content, context);
+            //console.log(content);
         }
     };
 
@@ -213,7 +210,7 @@ module.exports = function(pb) {
             content.layout = newLayout;
             mediaLoader.start(content.thumbnail_layout, function(err, newThumbnailLayout){
                 content.thumbnail_layout = newThumbnailLayout;
-                self.setLayout(content, undefined);
+                self.setLayoutEn(content, undefined);
                 //console.log(content.layout);
             });
             //console.log(content.thumbnail_layout);
@@ -326,23 +323,42 @@ module.exports = function(pb) {
         var breakString = '<br>';
         var tempLayout;
         var layout = this.getLayout(content);
-        layout = layout.substr(0,155);
-        var bHtml = layout.indexOf('<b>');
-        var iHtml = layout.indexOf('<i>');
-        var uHtml = layout.indexOf('<u>');
-        var sHtml = layout.indexOf('<strike>');
-        while(bHtml === 0 || iHtml === 0 || uHtml === 0 || sHtml === 0){
-            //console.log(bHtml);
-            if(sHtml === 0){
-                layout = layout.substr(5,150);
-            }
-            layout = layout.substr(3,150);
-            bHtml = layout.indexOf('<b>');
-            iHtml = layout.indexOf('<i>');
-            uHtml = layout.indexOf('<u>');
-            sHtml = layout.indexOf('<strike>');
-        };
-        layout = layout + '...<div><br></div>';
+        if(layout.length >= 155) {
+            layout = layout.substr(0, 155);
+            var bHtml = layout.indexOf('<b>');
+            var iHtml = layout.indexOf('<i>');
+            var uHtml = layout.indexOf('<u>');
+            var sHtml = layout.indexOf('<strike>');
+            while (bHtml === 0 || iHtml === 0 || uHtml === 0 || sHtml === 0) {
+                //console.log(bHtml);
+                if (sHtml === 0) {
+                    layout = layout.substr(5, 150);
+                }
+                layout = layout.substr(3, 150);
+                bHtml = layout.indexOf('<b>');
+                iHtml = layout.indexOf('<i>');
+                uHtml = layout.indexOf('<u>');
+                sHtml = layout.indexOf('<strike>');
+            };
+            layout = layout + '...<div><br></div>';
+        }else {
+            var bHtml = layout.indexOf('<b>');
+            var iHtml = layout.indexOf('<i>');
+            var uHtml = layout.indexOf('<u>');
+            var sHtml = layout.indexOf('<strike>');
+            while (bHtml === 0 || iHtml === 0 || uHtml === 0 || sHtml === 0) {
+                //console.log(bHtml);
+                if (sHtml === 0) {
+                    layout = layout.substr(5, 150);
+                }
+                layout = layout.substr(3, 150);
+                bHtml = layout.indexOf('<b>');
+                iHtml = layout.indexOf('<i>');
+                uHtml = layout.indexOf('<u>');
+                sHtml = layout.indexOf('<strike>');
+            };
+            layout = layout + '...<div><br></div>';
+        }
         //console.log(layout);
 
         // Firefox uses br and Chrome uses div in content editables.
@@ -402,23 +418,42 @@ module.exports = function(pb) {
         var breakString = '<br>';
         var tempLayout;
         var layout = this.getLayoutEn(content);
-        layout = layout.substr(0,155);
-        var bHtml = layout.indexOf('<b>');
-        var iHtml = layout.indexOf('<i>');
-        var uHtml = layout.indexOf('<u>');
-        var sHtml = layout.indexOf('<strike>');
-        while(bHtml === 0 || iHtml === 0 || uHtml === 0 || sHtml === 0){
-            //console.log(bHtml);
-            if(sHtml === 0){
-                layout = layout.substr(5,150);
-            }
-            layout = layout.substr(3,150);
-            bHtml = layout.indexOf('<b>');
-            iHtml = layout.indexOf('<i>');
-            uHtml = layout.indexOf('<u>');
-            sHtml = layout.indexOf('<strike>');
-        };
-        layout = layout + '...<div><br></div>';
+        if(layout.length >= 155) {
+            layout = layout.substr(0, 155);
+            var bHtml = layout.indexOf('<b>');
+            var iHtml = layout.indexOf('<i>');
+            var uHtml = layout.indexOf('<u>');
+            var sHtml = layout.indexOf('<strike>');
+            while (bHtml === 0 || iHtml === 0 || uHtml === 0 || sHtml === 0) {
+                //console.log(bHtml);
+                if (sHtml === 0) {
+                    layout = layout.substr(5, 150);
+                }
+                layout = layout.substr(3, 150);
+                bHtml = layout.indexOf('<b>');
+                iHtml = layout.indexOf('<i>');
+                uHtml = layout.indexOf('<u>');
+                sHtml = layout.indexOf('<strike>');
+            };
+            layout = layout + '...<div><br></div>';
+        }else {
+            var bHtml = layout.indexOf('<b>');
+            var iHtml = layout.indexOf('<i>');
+            var uHtml = layout.indexOf('<u>');
+            var sHtml = layout.indexOf('<strike>');
+            while (bHtml === 0 || iHtml === 0 || uHtml === 0 || sHtml === 0) {
+                //console.log(bHtml);
+                if (sHtml === 0) {
+                    layout = layout.substr(5, 150);
+                }
+                layout = layout.substr(3, 150);
+                bHtml = layout.indexOf('<b>');
+                iHtml = layout.indexOf('<i>');
+                uHtml = layout.indexOf('<u>');
+                sHtml = layout.indexOf('<strike>');
+            };
+            layout = layout + '...<div><br></div>';
+        }
         //console.log(layout);
 
         // Firefox uses br and Chrome uses div in content editables.
@@ -517,7 +552,7 @@ module.exports = function(pb) {
     };
 
     ArticleRenderer.prototype.getReadMoreSpanEn = function(content, anchorContent) {
-        return '&nbsp;<span class="read_more">' + this.getReadMoreLinkEn(content, anchorContent) + '</span>';
+        return '<span>' + this.getReadMoreLinkEn(content, anchorContent) + '</span>';
     };
 
     /**
@@ -534,7 +569,7 @@ module.exports = function(pb) {
     ArticleRenderer.prototype.getReadMoreLinkEn = function(content, anchorContent) {
 
         var path = pb.UrlService.urlJoin(this.getContentLinkPrefixEn() + content.url);
-        return '<a href="' + pb.UrlService.createSystemUrl(path, { hostname: this.hostname }) + '">' + anchorContent + '</a>';
+        return '<a class="read-more" href="' + pb.UrlService.createSystemUrl(path, { hostname: this.hostname }) + '">' + anchorContent + '</a>';
     };
 
     /**
@@ -581,7 +616,7 @@ module.exports = function(pb) {
     };
 
     ArticleRenderer.prototype.setLayoutEn = function(content, layout) {
-        content.article_layout = layout;
+        content.article_layout_en = layout;
     };
 
     /**

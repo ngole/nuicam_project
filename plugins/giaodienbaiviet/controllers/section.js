@@ -45,7 +45,6 @@ module.exports = function(pb) {
                     return cb(err);
                 }
                 //create the service
-                contentSettings.read_more_text = 'Xem thêm';
                 self.contentSettings = contentSettings;
                 var asContext = self.getServiceContext();
                 asContext.contentSettings = contentSettings;
@@ -124,7 +123,6 @@ module.exports = function(pb) {
      */
     SectionViewController.prototype.getContent = function(custUrl, offset, cb) {
         var self = this;
-        var totalPage;
         //lookup by URL
         self.dao.loadByValue('url', custUrl, 'section', function(err, section) {
             if (util.isError(err) || section == null) {
@@ -143,6 +141,7 @@ module.exports = function(pb) {
                     section: section,
                     content: content
                 };
+                //console.log(result);
                 cb(err, result);
             });
         });

@@ -45,6 +45,7 @@ module.exports = function(pb) {
                     return cb(err);
                 }
                 //create the service
+                contentSettings.read_more_text = 'Read more';
                 self.contentSettings = contentSettings;
                 var asContext = self.getServiceContext();
                 asContext.contentSettings = contentSettings;
@@ -72,8 +73,13 @@ module.exports = function(pb) {
     SectionEnViewController.prototype.render = function(cb) {
         var self    = this;
         var custUrl = this.pathVars.customUrl;
+        var page = this.query.page-1;
+        var offset = page*self.contentSettings.articles_per_page;
+        if(page<0){
+            return self.reqHandler.serve404();
+        }
 
-        this.getContentEn(custUrl, function(err, data) {
+        this.getContentEn(custUrl, offset, function(err, data) {
             if (util.isError(err)) {
                 return cb(err);
             }
@@ -85,16 +91,26 @@ module.exports = function(pb) {
                 section: data.section
             };
             //console.log(data.content);
-            self.contentViewLoader.render_en(data.content, options, function(err, html) {
-                if (util.isError(err)) {
-                    return cb(err);
-                }
+            var optsCount = {
+                render: false,
+                where: {}
+            };
+            pb.ContentObjectService.setPublishedClause(optsCount.where);
+            var content = data.content;
+            //console.log(data.content);
+            self.service.getCountBySection(data.section, content, optsCount, function(err, count) {
+                content.push(Math.ceil(count / self.contentSettings.articles_per_page));
+                self.contentViewLoader.render_en(content, options, function (err, html) {
+                    if (util.isError(err)) {
+                        return cb(err);
+                    }
 
-                var result = {
-                    content: html
-                };
-                //console.log(html);
-                cb(result);
+                    var result = {
+                        content: html
+                    };
+                    //console.log(html);
+                    cb(result);
+                });
             });
         });
     };
@@ -105,7 +121,7 @@ module.exports = function(pb) {
      * @param {String} custUrl The URL slug of the section
      * @param {Function} cb
      */
-    SectionEnViewController.prototype.getContentEn = function(custUrl, cb) {
+    SectionEnViewController.prototype.getContentEn = function(custUrl, offset, cb) {
         var self = this;
 
         //lookup by URL
@@ -118,6 +134,7 @@ module.exports = function(pb) {
                 render: true,
                 where: {},
                 limit: self.contentSettings.articles_per_page || 5,
+                offset: offset,
                 order: [{'publish_date': pb.DAO.DESC}, {'created': pb.DAO.DESC}]
             };
             pb.ContentObjectService.setPublishedClause(opts.where);
