@@ -104,6 +104,8 @@ module.exports = function(pb) {
      * @type {String}
      */
     BaseObjectService.GET_ALL = "getAll";
+
+    BaseObjectService.GET_COUNT = "getCount";
     
     /**
      * The event that is triggered before the query is executed to retrieve 

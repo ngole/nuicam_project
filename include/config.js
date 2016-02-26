@@ -242,7 +242,7 @@ Configuration.getBaseConfig = function(multisite) {
         plugins: {
             caching: {
                 use_memory: true,
-                use_cache: false,
+                use_cache: true,
 
                 //The timeout specifies how long in milliseconds a setting will exist
                 //in memory before being flushed.  A value of 0 indicates that the

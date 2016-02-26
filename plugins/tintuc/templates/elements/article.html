@@ -1,14 +1,33 @@
-<div id="article_^article_id^" class="article" article-index="^article_index^">
-    <div class="col-md-8 col-md-offset-2">
-        <h1>^article_headline^</h1>
-        <h3 style="^article_subheading_display^">^article_subheading^</h3>
-        <div class="article_body">
-            ^tmp_elements=article=byline^
-            <div class="timestamp" style="^article_timestamp_display^">^article_timestamp^</div>
-            ^article_layout^
+<!--<div id="article_^article_id^" class="article" article-index="^article_index^">-->
+    <!--<div class="col-md-8 col-md-offset-2">-->
+        <!--<h1>^article_headline^</h1>-->
+        <!--<h3 style="^article_subheading_display^">^article_subheading^</h3>-->
+        <!--<div class="article_body">-->
+            <!--^tmp_elements=article=byline^-->
+            <!--<div class="timestamp" style="^article_timestamp_display^">^article_timestamp^</div>-->
+            <!--^article_layout^-->
+        <!--</div>-->
+        <!--^comments^-->
+        <!--<div class="spacer"></div>-->
+    <!--</div>-->
+<!--</div>-->
+
+<div class="row news-content">
+    <div class="col-md-12">
+        <div class="col-xs-4">
+            <div class="row">
+                <div class="col-xs-12">
+                    ^thumbnail^
+                </div>
+            </div>
         </div>
-        ^comments^
-        <div class="spacer"></div>
+        <div class="col-xs-8">
+            <div class="preview-title">
+                ^article_headline^
+            </div>
+            <div class="preview-content">
+                ^article_layout^
+            </div>
+        </div>
     </div>
 </div>
-

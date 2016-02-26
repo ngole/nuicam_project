@@ -48,7 +48,7 @@ module.exports = function(pb) {
                 var cvlContext             = self.getServiceContext();
                 cvlContext.contentSettings = contentSettings;
                 cvlContext.service         = self.service;
-                self.contentViewLoader     = new pb.ContentViewLoader(cvlContext);
+                self.contentViewLoader     = new pb.ContentViewLoader(cvlContext, 'elements/article');
 
                 cb(null, true);
             });

@@ -243,6 +243,22 @@ module.exports = function(pb) {
         };
         ContentObjectService.super_.prototype.getAll.apply(this, [options, afterGetAll]);
     };
+
+    ContentObjectService.prototype.getCount = function(options, cb) {
+
+        var self = this;
+        var afterCount = function(err, contentArray) {
+            if (util.isError(err) || contentArray === null || contentArray.length === 0 || !options || !options.render) {
+                return cb(err, contentArray);
+            }
+
+            var renderOptions = self.getRenderOptions(options, true);
+
+            //complete the rendering
+            self.render(contentArray, renderOptions, cb);
+        };
+        ContentObjectService.super_.prototype.count.apply(this, [options, afterCount]);
+    };
     
     /**
      *

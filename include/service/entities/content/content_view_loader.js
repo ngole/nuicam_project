@@ -62,7 +62,7 @@ module.exports = function(pb) {
      * @type {String}
      */
     var DISPLAY_NONE_STYLE_ATTR = 'display:none;';
-
+    var contentApi = {};
     /**
      *
      * @method getMetaInfo
@@ -96,6 +96,7 @@ module.exports = function(pb) {
             self.ts.registerLocal('navigation', new pb.TemplateValue(data.nav.navigation, false));
             self.ts.registerLocal('navigation_en', new pb.TemplateValue(data.nav.navigation_en, false));
             self.ts.registerLocal('account_buttons', new pb.TemplateValue(data.nav.accountButtons, false));
+            self.ts.registerLocal('total_page', new pb.TemplateValue(contentArray[2], false));
             self.ts.registerLocal('infinite_scroll', function(flag, cb) {
                 self.onInfiniteScroll(contentArray, options, cb);
             });
@@ -108,7 +109,7 @@ module.exports = function(pb) {
             self.ts.registerLocal('articles', function(flag, cb) {
                 self.onContent(contentArray, options, cb);
             });
-
+            contentApi = contentArray;
             self.getTemplate(contentArray, options, function(err, template) {
                 if (util.isError(err)) {
                     return cb(err);
@@ -447,6 +448,7 @@ module.exports = function(pb) {
         ats.registerLocal('article_timestamp', showTimestamp && content.timestamp ? content.timestamp : '');
         ats.registerLocal('article_timestamp_display', ContentViewLoader.getDisplayAttr(showTimestamp));
         ats.registerLocal('article_layout', new pb.TemplateValue(content.layout, false));
+        ats.registerLocal('thumbnail', new pb.TemplateValue(content.thumbnail_layout, false));
         ats.registerLocal('article_url', content.url);
         ats.registerLocal('display_byline', ContentViewLoader.getDisplayAttr(showByLine));
         ats.registerLocal('author_photo', ContentViewLoader.valOrEmpty(content.author_photo));
@@ -497,6 +499,7 @@ module.exports = function(pb) {
         ats.registerLocal('article_timestamp', showTimestamp && content.timestamp ? content.timestamp : '');
         ats.registerLocal('article_timestamp_display', ContentViewLoader.getDisplayAttr(showTimestamp));
         ats.registerLocal('article_layout', new pb.TemplateValue(content.layout, false));
+        ats.registerLocal('thumbnail', new pb.TemplateValue(content.thumbnail_layout, false));
         ats.registerLocal('article_url', content.url_en);
         ats.registerLocal('display_byline', ContentViewLoader.getDisplayAttr(showByLine));
         ats.registerLocal('author_photo', ContentViewLoader.valOrEmpty(content.author_photo));
@@ -752,6 +755,13 @@ module.exports = function(pb) {
     ContentViewLoader.valOrEmpty = function(val) {
         return val ? val : '';
     };
+
+    ContentViewLoader.getArticleApi = function(){
+        return contentApi;
+    }
+    ContentViewLoader.getArticleEnApi = function(){
+        return contentApi;
+    }
 
     return ContentViewLoader;
 };

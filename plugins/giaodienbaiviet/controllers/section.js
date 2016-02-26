@@ -73,9 +73,14 @@ module.exports = function(pb) {
     SectionViewController.prototype.render = function(cb) {
         var self    = this;
         var custUrl = this.pathVars.customUrl;
+        var page = this.query.page-1;
+        var offset = page*self.contentSettings.articles_per_page;
+        if(page<0){
+            return self.reqHandler.serve404();
+        }
         //console.log(custUrl);
 
-        this.getContent(custUrl, function(err, data) {
+        this.getContent(custUrl, offset, function(err, data) {
             if (util.isError(err)) {
                 return cb(err);
             }
@@ -86,18 +91,28 @@ module.exports = function(pb) {
             var options = {
                 section: data.section
             };
-            //console.log(options);
-            self.contentViewLoader.render(data.content, options, function(err, html) {
-                if (util.isError(err)) {
-                    return cb(err);
-                }
 
-                var result = {
-                    content: html
-                };
-                //console.log(html);
-                cb(result);
+            var optsCount = {
+                render: false,
+                where: {}
+            };
+            pb.ContentObjectService.setPublishedClause(optsCount.where);
+            var content = data.content;
+            self.service.getCountBySection(data.section, content, optsCount, function(err, count) {
+                content.push(Math.ceil(count/self.contentSettings.articles_per_page));
+                self.contentViewLoader.render(content, options, function(err, html) {
+                    if (util.isError(err)) {
+                        return cb(err);
+                    }
+
+                    var result = {
+                        content: html
+                    };
+                    //console.log(html);
+                    cb(result);
+                });
             });
+
         });
     };
 
@@ -107,19 +122,19 @@ module.exports = function(pb) {
      * @param {String} custUrl The URL slug of the section
      * @param {Function} cb
      */
-    SectionViewController.prototype.getContent = function(custUrl, cb) {
+    SectionViewController.prototype.getContent = function(custUrl, offset, cb) {
         var self = this;
-
+        var totalPage;
         //lookup by URL
         self.dao.loadByValue('url', custUrl, 'section', function(err, section) {
             if (util.isError(err) || section == null) {
                 return cb(null, null);
             }
-
             var opts = {
                 render: true,
                 where: {},
                 limit: self.contentSettings.articles_per_page || 5,
+                offset: offset,
                 order: [{'publish_date': pb.DAO.DESC}, {'created': pb.DAO.DESC}]
             };
             pb.ContentObjectService.setPublishedClause(opts.where);
@@ -128,7 +143,6 @@ module.exports = function(pb) {
                     section: section,
                     content: content
                 };
-                //console.log(result.content);
                 cb(err, result);
             });
         });

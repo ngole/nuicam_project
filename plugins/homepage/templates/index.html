@@ -1,4 +1,5 @@
 ^tmp_head^
+</div>
 <div class="container">
     <div id="myCarousel" class="carousel slide" data-ride="carousel" style="padding:0px;height: 100%">
         <div class="carousel-inner" role="listbox">
@@ -20,14 +21,89 @@
 <div class="container space"></div>
 <div class="container article-container">
     <div class="row">
-        <div class=article-show">
-            <div id="articles">
-                ^articles^
+        <div class="col-xs-2 bar left-bar">
+            <div class="box">
+                <div class="box-header">
+                    <a href="">TIN TỨC & SỰ KIỆN</a>
+                </div>
+                <div class="box-content">
+                    <div>
+                        <a href="#">
+                            <p>Ban quản lý khu di lịch tổng kết năm 2015, triển khai nhiệm vụ công tác năm 2016</p>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="#">
+                            <p>Ban quản lý khu di lịch tổng kết năm 2015, triển khai nhiệm vụ công tác năm 2016</p>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="#">
+                            <p>Ban quản lý khu di lịch tổng kết năm 2015, triển khai nhiệm vụ công tác năm 2016</p>
+                        </a>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <a href="#">Xem thêm tin</a>
+                </div>
             </div>
+            <div class="box">
+                <div class="box-header">
+                    <a href="">VĂN BẢN MỚI</a>
+                </div>
+                <div class="box-content">
+                    <div>
+                        <a href="#">
+                            <p>Ban quản lý khu di lịch tổng kết năm 2015, triển khai nhiệm vụ công tác năm 2016</p>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="#">
+                            <p>Ban quản lý khu di lịch tổng kết năm 2015, triển khai nhiệm vụ công tác năm 2016</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-8 news-show">
+            <div class="page-title">
+                TIN TỨC & SỰ KIỆN
+            </div>
+            ^articles^
+        <div class="news-pagination">
+            <div id="pagination"></div>
+        </div>
+        <script type='text/javascript'>
+            var totalPage = '^total_page^';
+            var currentPage = '^current_url^'.substr('^current_url^'.length-1,1);
+            if(isNaN(currentPage)){
+                currentPage = 1;
+            }
+            console.log(currentPage);
+            var url = '^current_url^';
+            if(url.indexOf('?') != -1){
+                url = url.substring(0,url.indexOf('?'));
+            }
+            if(totalPage>1) {
+                var options = {
+                    alignment: "center",
+                    currentPage: currentPage,
+                    totalPages: totalPage,
+                    numberOfPages:3,
+                    pageUrl: function (type, page, current) {
+                        return 'http://localhost:8080' + url + '?page=' + page;
+                    }
+                }
+                $('#pagination').bootstrapPaginator(options);
+            }
+        </script>
+
+    </div>
+    <div class="spacer"></div>
         </div>
     </div>
 </div>
-<div class="container space"></div>
+<!--<div class="container space"></div>-->
 ^infinite_scroll^
 ^angular^
 ^tmp_footer^

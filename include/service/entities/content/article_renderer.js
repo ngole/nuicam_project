@@ -106,7 +106,6 @@ module.exports = function(pb) {
                 util.wrapTask(this, this.formatMediaReferences, [content, context])
             ];
         }
-
         //render comments unless explicitly asked not too
         if (context.renderComments !== false) {
             tasks.push(util.wrapTask(this, this.formatComments, [content, context]));
@@ -165,7 +164,6 @@ module.exports = function(pb) {
      */
     ArticleRenderer.prototype.formatLayout = function(content, context) {
         var contentSettings = context.contentSettings;
-
         if(this.containsReadMoreFlag(content)) {
             this.formatLayoutForReadMore(content, context);
         }
@@ -193,24 +191,32 @@ module.exports = function(pb) {
      */
     ArticleRenderer.prototype.formatMediaReferences = function(content, context, cb) {
         var self = this;
-
+        content.thumbnail_layout = '^media_display_'+content.thumbnail+'/position:center,maxHeight:100px^';
         content.layout  = this.getLayout(content);
         var mediaLoader = new pb.MediaLoader({site: self.site, onlyThisSite: self.onlyThisSite});
         mediaLoader.start(content.layout, function(err, newLayout) {
             content.layout = newLayout;
-            self.setLayout(content, undefined);
+            mediaLoader.start(content.thumbnail_layout, function(err, newThumbnailLayout){
+                content.thumbnail_layout = newThumbnailLayout;
+                self.setLayout(content, undefined);
+            });
             cb(err);
         });
     };
 
     ArticleRenderer.prototype.formatMediaReferencesEn = function(content, context, cb) {
         var self = this;
-
+        content.thumbnail_layout = '^media_display_'+content.thumbnail+'/position:center,maxHeight:100px^';
         content.layout  = this.getLayoutEn(content);
         var mediaLoader = new pb.MediaLoader({site: self.site, onlyThisSite: self.onlyThisSite});
         mediaLoader.start(content.layout, function(err, newLayout) {
             content.layout = newLayout;
-            self.setLayout(content, undefined);
+            mediaLoader.start(content.thumbnail_layout, function(err, newThumbnailLayout){
+                content.thumbnail_layout = newThumbnailLayout;
+                self.setLayout(content, undefined);
+                //console.log(content.layout);
+            });
+            //console.log(content.thumbnail_layout);
             cb(err);
         });
     };
@@ -320,6 +326,24 @@ module.exports = function(pb) {
         var breakString = '<br>';
         var tempLayout;
         var layout = this.getLayout(content);
+        layout = layout.substr(0,155);
+        var bHtml = layout.indexOf('<b>');
+        var iHtml = layout.indexOf('<i>');
+        var uHtml = layout.indexOf('<u>');
+        var sHtml = layout.indexOf('<strike>');
+        while(bHtml === 0 || iHtml === 0 || uHtml === 0 || sHtml === 0){
+            //console.log(bHtml);
+            if(sHtml === 0){
+                layout = layout.substr(5,150);
+            }
+            layout = layout.substr(3,150);
+            bHtml = layout.indexOf('<b>');
+            iHtml = layout.indexOf('<i>');
+            uHtml = layout.indexOf('<u>');
+            sHtml = layout.indexOf('<strike>');
+        };
+        layout = layout + '...<div><br></div>';
+        //console.log(layout);
 
         // Firefox uses br and Chrome uses div in content editables.
         // We need to see which one is being used
@@ -356,7 +380,6 @@ module.exports = function(pb) {
             // Cutoff the content at the right number of paragraphs
             for(i = 0; i < tempLayoutArray.length && i < contentSettings.auto_break_articles; i++) {
                 if(i === contentSettings.auto_break_articles - 1 && i != tempLayoutArray.length - 1) {
-
                     newLayout += tempLayoutArray[i] + this.getReadMoreSpan(content, contentSettings.read_more_text) + breakString;
                     continue;
                 }
@@ -369,7 +392,7 @@ module.exports = function(pb) {
 
             // Replace the double breaks
             newLayout = newLayout.split('^dbl_pgf_break^').join(breakString);
-
+            //console.log(content);
             this.setLayout(content, newLayout);
         }
     };
@@ -379,6 +402,24 @@ module.exports = function(pb) {
         var breakString = '<br>';
         var tempLayout;
         var layout = this.getLayoutEn(content);
+        layout = layout.substr(0,155);
+        var bHtml = layout.indexOf('<b>');
+        var iHtml = layout.indexOf('<i>');
+        var uHtml = layout.indexOf('<u>');
+        var sHtml = layout.indexOf('<strike>');
+        while(bHtml === 0 || iHtml === 0 || uHtml === 0 || sHtml === 0){
+            //console.log(bHtml);
+            if(sHtml === 0){
+                layout = layout.substr(5,150);
+            }
+            layout = layout.substr(3,150);
+            bHtml = layout.indexOf('<b>');
+            iHtml = layout.indexOf('<i>');
+            uHtml = layout.indexOf('<u>');
+            sHtml = layout.indexOf('<strike>');
+        };
+        layout = layout + '...<div><br></div>';
+        //console.log(layout);
 
         // Firefox uses br and Chrome uses div in content editables.
         // We need to see which one is being used
@@ -472,7 +513,7 @@ module.exports = function(pb) {
      * @return {String}
      */
     ArticleRenderer.prototype.getReadMoreSpan = function(content, anchorContent) {
-        return '&nbsp;<span class="read_more">' + this.getReadMoreLink(content, anchorContent) + '</span>';
+        return '<span>' + this.getReadMoreLink(content, anchorContent) + '</span>';
     };
 
     ArticleRenderer.prototype.getReadMoreSpanEn = function(content, anchorContent) {
@@ -486,9 +527,8 @@ module.exports = function(pb) {
      * @return {String}
      */
     ArticleRenderer.prototype.getReadMoreLink = function(content, anchorContent) {
-
         var path = pb.UrlService.urlJoin(this.getContentLinkPrefix() + content.url);
-        return '<a href="' + pb.UrlService.createSystemUrl(path, { hostname: this.hostname }) + '">' + anchorContent + '</a>';
+        return '<a class="read-more" href="' + pb.UrlService.createSystemUrl(path, { hostname: this.hostname }) + '">' + anchorContent + '</a>';
     };
 
     ArticleRenderer.prototype.getReadMoreLinkEn = function(content, anchorContent) {
@@ -523,6 +563,10 @@ module.exports = function(pb) {
     ArticleRenderer.prototype.getLayoutEn = function(content) {
         return content.article_layout_en;
     };
+
+    ArticleRenderer.prototype.getThumbnail = function(content){
+        return content.thumbnail;
+    }
 
     /**
      * A workaround to allow this prototype to operate on articles and pages.

@@ -961,7 +961,7 @@ module.exports = function Routes(pb){
             auth_required: true,
             inactive_site_access: true,
             access_level: pb.SecurityService.ACCESS_EDITOR,
-            controller: path.join(pb.config.docRoot, 'plugins', 'pencilblue', 'controllers', 'admin', 'users', 'user_form.js'),
+            controller: path.join(pb.config.docRoot, 'plugins', 'homepage', 'controllers', 'admin', 'users', 'user_form.js'),
         },
         {
             method: 'get',
@@ -1400,6 +1400,15 @@ module.exports = function Routes(pb){
             handler: "getAllSection",
             auth_required: false,
             controller: path.join(pb.config.docRoot, 'plugins', 'homepage', 'controllers', 'api', 'menu', 'menu_api_controller.js'),
+            content_type: 'application/json',
+            request_body: ['application/json']
+        },
+        {
+            method: 'get',
+            path: "/api/article/get_articles",
+            handler: "getAllArticle",
+            auth_required: false,
+            controller: path.join(pb.config.docRoot, 'plugins', 'homepage', 'controllers', 'api', 'article', 'article_api_controller.js'),
             content_type: 'application/json',
             request_body: ['application/json']
         },

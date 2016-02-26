@@ -108,8 +108,27 @@ module.exports = function(pb) {
             section = section[pb.DAO.getIdField()] + '';
         }
         options.where.article_sections = section;
-
         this.getAll(options, cb);
+    };
+
+    ArticleServiceV2.prototype.getCountBySection = function(sectionId, content, options, cb) {
+        if (util.isFunction(options)) {
+            cb = options;
+            options = {};
+        }
+
+        //ensure a where clause exists
+        if (!util.isObject(options.where)) {
+            options.where = {};
+        }
+
+        //add where clause to search based on section
+        var section = sectionId;
+        if (util.isObject(section)) {
+            section = section[pb.DAO.getIdField()] + '';
+        }
+        options.where.article_sections = section;
+        this.getCount(options, cb);
     };
 
     /**
