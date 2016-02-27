@@ -96,7 +96,13 @@ module.exports = function(pb) {
             self.ts.registerLocal('navigation', new pb.TemplateValue(data.nav.navigation, false));
             self.ts.registerLocal('navigation_en', new pb.TemplateValue(data.nav.navigation_en, false));
             self.ts.registerLocal('account_buttons', new pb.TemplateValue(data.nav.accountButtons, false));
-            self.ts.registerLocal('total_page', new pb.TemplateValue(contentArray[2], false));
+            if(isNaN(contentArray[2])){
+                if(!isNaN(contentArray[1])){
+                    self.ts.registerLocal('total_page', new pb.TemplateValue(contentArray[1], false));
+                }
+            }else {
+                self.ts.registerLocal('total_page', new pb.TemplateValue(contentArray[2], false));
+            };
             self.ts.registerLocal('infinite_scroll', function(flag, cb) {
                 self.onInfiniteScroll(contentArray, options, cb);
             });
@@ -132,7 +138,13 @@ module.exports = function(pb) {
             self.ts.registerLocal('navigation', new pb.TemplateValue(data.nav.navigation, false));
             self.ts.registerLocal('navigation_en', new pb.TemplateValue(data.nav.navigation_en, false));
             self.ts.registerLocal('account_buttons', new pb.TemplateValue(data.nav.accountButtons, false));
-            self.ts.registerLocal('total_page', new pb.TemplateValue(contentArray[2], false));
+            if(isNaN(contentArray[2])){
+                if(!isNaN(contentArray[1])){
+                    self.ts.registerLocal('total_page', new pb.TemplateValue(contentArray[1], false));
+                }
+            }else {
+                self.ts.registerLocal('total_page', new pb.TemplateValue(contentArray[2], false));
+            };
             self.ts.registerLocal('infinite_scroll', function(flag, cb) {
                 self.onInfiniteScroll(contentArray, options, cb);
             });

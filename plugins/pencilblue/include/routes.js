@@ -257,9 +257,9 @@ module.exports = function Routes(pb){
         },
         {
             method: 'get',
-            path: "/page/:customUrl",
+            path: "/vn_page/:customUrl",
             auth_required: false,
-            controller: path.join(pb.config.docRoot, 'plugins', 'pencilblue', 'controllers', 'page.js'),
+            controller: path.join(pb.config.docRoot, 'plugins', 'homepage', 'controllers', 'page.js'),
             content_type: 'text/html',
             localization: true
         },

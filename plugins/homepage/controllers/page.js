@@ -104,7 +104,12 @@ module.exports = function(pb) {
         //put a check to look up by ID *FIRST*
         var conditions = [];
         if(pb.validation.isIdStr(custUrl, true)) {
-            conditions.push(pb.DAO.getIdWhere(custUrl));
+            pb.DAO.loadByValues({url: custUrl}, 'page', {select: '_id'}, function(err, id){
+                if(util.error){
+                    return cb(err);
+                }
+                conditions.push(id);
+            });
         }
         
         //put a check to look up by URL
