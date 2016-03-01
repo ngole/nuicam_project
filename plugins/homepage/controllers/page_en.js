@@ -23,15 +23,15 @@ module.exports = function(pb) {
      * @constructor
      * @extends BaseController
      */
-    function PageViewController(){}
-    util.inherits(PageViewController, pb.BaseController);
+    function PageEnViewController(){}
+    util.inherits(PageEnViewController, pb.BaseController);
 
     /**
      * @method init
      * @param {Object} content
      * @param {Function} cb
      */
-    PageViewController.prototype.init = function(context, cb) {
+    PageEnViewController.prototype.init = function(context, cb) {
         var self = this;
         var init = function(err) {
             if (util.isError(err)) {
@@ -39,7 +39,7 @@ module.exports = function(pb) {
             }
 
             //create the service
-            self.service = new pb.PageService(self.getServiceContext());
+            self.service = new pb.PageServiceEn(self.getServiceContext());
 
             //create the loader context
             var context     = self.getServiceContext();
@@ -48,14 +48,14 @@ module.exports = function(pb) {
 
             cb(null, true);
         };
-        PageViewController.super_.prototype.init.apply(this, [context, init]);
+        PageEnViewController.super_.prototype.init.apply(this, [context, init]);
     };
 
     /**
      * @method render
      * @param {Function} cb
      */
-    PageViewController.prototype.render = function(cb) {
+    PageEnViewController.prototype.render = function(cb) {
         var self    = this;
         var custUrl = this.pathVars.customUrl;
 
@@ -72,9 +72,10 @@ module.exports = function(pb) {
             else if (content == null) {
                 return self.reqHandler.serve404();
             }
-
+            //console.log(content);
             var options = {};
-            self.contentViewLoader.render([content], options, function(err, html) {
+            console.log(options);
+            self.contentViewLoader.render_en([content], options, function(err, html) {
                 if (util.isError(err)) {
                     return cb(err);
                 }
@@ -97,12 +98,12 @@ module.exports = function(pb) {
      * @return {Object} An object representing the where clause to use in the
      * query to locate the article
      */
-    PageViewController.prototype.getWhereClause = function(custUrl) {
+    PageEnViewController.prototype.getWhereClause = function(custUrl) {
 
         //put a check to look up by ID *FIRST*
         var conditions = [];
         if(pb.validation.isIdStr(custUrl, true)) {
-            pb.DAO.loadByValues({url: custUrl}, 'page', {select: '_id'}, function(err, id){
+            pb.DAO.loadByValues({url_en: custUrl}, 'page', {select: '_id'}, function(err, id){
                 if(util.error){
                     return cb(err);
                 }
@@ -112,7 +113,7 @@ module.exports = function(pb) {
 
         //put a check to look up by URL
         conditions.push({
-            url: custUrl
+            url_en: custUrl
         });
 
         //check for object ID as the custom URL
@@ -129,5 +130,5 @@ module.exports = function(pb) {
     };
 
     //exports
-    return PageViewController;
+    return PageEnViewController;
 };

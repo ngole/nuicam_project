@@ -264,6 +264,14 @@ module.exports = function Routes(pb){
             localization: true
         },
         {
+            method: 'get',
+            path: "/en_page/:customUrl",
+            auth_required: false,
+            controller: path.join(pb.config.docRoot, 'plugins', 'homepage', 'controllers', 'page_en.js'),
+            content_type: 'text/html',
+            localization: true
+        },
+        {
             method: 'post',
             path: "/api/comments/new_comment",
             auth_required: true,
@@ -396,7 +404,7 @@ module.exports = function Routes(pb){
             access_level: pb.SecurityService.ACCESS_EDITOR,
             auth_required: true,
             inactive_site_access: true,
-            controller: path.join(pb.config.docRoot, 'plugins', 'pencilblue', 'controllers', 'admin', 'content', 'navigation', 'nav_item_form.js'),
+            controller: path.join(pb.config.docRoot, 'plugins', 'homepage', 'controllers', 'admin', 'content', 'navigation', 'nav_item_form.js'),
             content_type: 'text/html'
         },
         {
@@ -425,7 +433,7 @@ module.exports = function Routes(pb){
             access_level: pb.SecurityService.ACCESS_EDITOR,
             auth_required: true,
             inactive_site_access: true,
-            controller: path.join(pb.config.docRoot, 'plugins', 'pencilblue', 'controllers', 'actions', 'admin', 'content', 'navigation', 'new_nav_item.js'),
+            controller: path.join(pb.config.docRoot, 'plugins', 'homepage', 'controllers', 'actions', 'admin', 'content', 'navigation', 'new_nav_item.js'),
             content_type: 'text/html'
         },
         {
@@ -1350,7 +1358,7 @@ module.exports = function Routes(pb){
             auth_required: true,
             inactive_site_access: true,
             access_level: pb.SecurityService.ACCESS_WRITER,
-            controller: path.join(pb.config.docRoot, 'plugins/pencilblue/controllers/api/content/page_api_controller.js')
+            controller: path.join(pb.config.docRoot, 'plugins/homepage/controllers/api/content/page_api_controller.js')
         },
         {
             method: 'get',

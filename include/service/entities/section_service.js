@@ -410,7 +410,7 @@ module.exports = function SectionServiceModule(pb) {
         }
         else if (navItem.type === 'article' || navItem.type === 'page') {
             navItem.link   = null;
-            navItem.url    = null;
+            //navItem.url    = null;
             navItem.editor = null;
             navItem.new_tab = null;
         }
@@ -796,11 +796,12 @@ module.exports = function SectionServiceModule(pb) {
      * @param {Object} navItem
      */
     SectionService.formatUrl = function(navItem) {
+        //console.log(navItem.url_en);
         if (util.isString(navItem.link)) {
             navItem.url = navItem.link;
             navItem.url_en = navItem.link_en;
         }
-        else if(navItem.url)
+        else if(navItem.url && !(navItem.type === 'article' || navItem.type === 'page') )
         {
             navItem.url = pb.UrlService.urlJoin('/vn/', navItem.url);
             if(navItem.url_en)
@@ -812,9 +813,35 @@ module.exports = function SectionServiceModule(pb) {
                 navItem.url_en = pb.UrlService.urlJoin('/en/', navItem.url_en);
         }
         else if (navItem.type === 'page') {
-            navItem.url = pb.UrlService.urlJoin('/page', navItem.item);
-            if(navItem.url_en)
-                navItem.url_en = pb.UrlService.urlJoin('/page', navItem.url_en);
+            var where = pb.DAO.getIdWhere(navItem.item)
+            var opts ={
+                where : where,
+                select: ['url','_id']
+            };
+            var dao   = new pb.DAO();
+            dao.q('page', opts, function(err, url) {
+                if (util.isError(err)) {
+                    cb(err);
+                }
+                //console.log(url[0].url);
+                navItem.url = pb.UrlService.urlJoin('/vn_page', url[0].url);
+            });
+            if(navItem.url_en) {
+                var where = pb.DAO.getIdWhere(navItem.item)
+                //console.log(where);
+                var opts ={
+                    where : where,
+                    select: ['url_en','_id']
+                };
+                var dao   = new pb.DAO();
+                dao.q('page', opts, function(err, url) {
+                    if (util.isError(err)) {
+                        cb(err);
+                    }
+                    //console.log(url[0].url_en);
+                    navItem.url_en = pb.UrlService.urlJoin('/en_page', url[0].url_en);
+                });
+            }
         }
         else if (navItem.type === 'container'){
             navItem.url = pb.UrlService.urlJoin('/', navItem.item);
@@ -838,7 +865,7 @@ module.exports = function SectionServiceModule(pb) {
             navItem.url_en = pb.UrlService.urlJoin('/', navItem.item);
         }
         else if (navItem.type === 'page') {
-            navItem.url_en = pb.UrlService.urlJoin('/page', navItem.item);
+            navItem.url_en = pb.UrlService.urlJoin('/en_page', navItem.item);
         }
         else if (navItem.type === 'container'){
             navItem.url_en = pb.UrlService.urlJoin('/', navItem.item);

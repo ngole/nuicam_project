@@ -256,8 +256,11 @@ module.exports = function PB(config) {
     pb.ContentObjectService = require(path.join(config.docRoot, '/include/service/entities/content/content_object_service.js'))(pb);
     pb.ArticleServiceV2     = require(path.join(config.docRoot, '/include/service/entities/content/article_service_v2.js'))(pb);
     pb.ArticleRenderer      = require(path.join(config.docRoot, '/include/service/entities/content/article_renderer.js'))(pb);
+    pb.ArticleRendererEn      = require(path.join(config.docRoot, '/include/service/entities/content/article_renderer_en.js'))(pb);
     pb.PageRenderer         = require(path.join(config.docRoot, '/include/service/entities/content/page_renderer.js'))(pb);
+    pb.PageRendererEn         = require(path.join(config.docRoot, '/include/service/entities/content/page_renderer_en.js'))(pb);
     pb.PageService          = require(path.join(config.docRoot, '/include/service/entities/content/page_service.js'))(pb);
+    pb.PageServiceEn          = require(path.join(config.docRoot, '/include/service/entities/content/page_service_en.js'))(pb);
     pb.ContentViewLoader    = require(path.join(config.docRoot, '/include/service/entities/content/content_view_loader.js'))(pb);
 
     pb.SiteMapService = require(path.join(config.docRoot, '/include/service/entities/site_map_service.js'))(pb);

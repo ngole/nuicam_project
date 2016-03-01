@@ -273,9 +273,47 @@ module.exports = function(pb) {
                 if (util.isError(err)) {
                     return cb(err);
                 }
-
                 context.data = results;
                 self._emit(BaseObjectService.GET_ALL, context, function(err) {
+                    cb(err, results);
+                });
+            });
+        });
+    };
+
+    BaseObjectService.prototype.getAllEn = function(options, cb) {
+        if (util.isFunction(options)) {
+            cb      = options;
+            options = {};
+        }
+
+        //fire off the beforeGetAll event to allow plugins to modify queries
+        var self    = this;
+        var context = this.getContext(options);
+        self._emit(BaseObjectService.BEFORE_GET_ALL, context, function(err) {
+            if (util.isError(err)) {
+                return cb(err);
+            }
+
+            //set a reasonable limit
+            //TODO evaluate if this should be at the service level or controller
+            //level
+            var limit = BaseObjectService.getLimit(options.limit);
+
+            var opts = {
+                select: options.select,
+                where: options.where,
+                order: options.order,
+                limit: limit,
+                offset: options.offset
+            };
+            self.dao.q(self.type, opts, function(err, results) {
+                if (util.isError(err)) {
+                    return cb(err);
+                }
+                context.data = results;
+                self._emit(BaseObjectService.GET_ALL, context, function(err) {
+                    //console.log(results);
                     cb(err, results);
                 });
             });
@@ -409,6 +447,19 @@ module.exports = function(pb) {
         options.limit = 1;
         
         this.getAll(options, function(err, results) {
+            cb(err, util.isArray(results) && results.length ? results[0] : null);
+        });
+    };
+
+    BaseObjectService.prototype.getSingleEn = function(options, cb) {
+        if (util.isFunction(options)) {
+            cb      = options;
+            options = {};
+        }
+        options.limit = 1;
+
+        this.getAllEn(options, function(err, results) {
+            //console.log(results);
             cb(err, util.isArray(results) && results.length ? results[0] : null);
         });
     };

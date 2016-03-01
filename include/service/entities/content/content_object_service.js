@@ -214,6 +214,18 @@ module.exports = function(pb) {
 
         ContentObjectService.super_.prototype.getSingle.apply(this, [options, cb]);
     };
+
+    ContentObjectService.prototype.getSingleEn = function(options, cb) {
+        if (util.isFunction(options)) {
+            cb      = options;
+            options = {};
+        }
+        if (options.readMore === undefined) {
+            options.readMore = false;
+        }
+
+        ContentObjectService.super_.prototype.getSingleEn.apply(this, [options, cb]);
+    };
     
     /**
      *
