@@ -48,7 +48,7 @@ module.exports = {
         SORT: 'Sắp Xếp',
         NOW: 'Ngay Bây Giờ',
         NOW_EN: 'Now',
-        CONFIRM_DELETE: 'Bạn chắc chắn muốn xóa?',
+        CONFIRM_DELETE: '*<i>Bạn không nên xóa những gì có sẵn lúc đầu.</i>*<br/> Bạn có muốn xóa? ',
         LOAD_FILE: 'Load file',
         SELECT_FILE: 'Select file',
         NO_ARTICLES: 'Không tìm thấy bài viết phù hợp',
@@ -271,14 +271,16 @@ module.exports = {
         GENERATE_EN: 'Generate'
     },
     topics: {
-        MANAGE_TOPICS: 'Manage topics',
-        NEW_TOPIC: 'New topic',
-        TOPIC_NAME: 'Topic name',
-        EXISTING_TOPIC: 'A topic with this name already exists',
-        TOPICS_CREATED: 'The topics were successfully created',
-        IMPORT_TOPICS: 'Import topics',
-        IMPORT_TOPICS_HELP: 'Here you can import a CSV file of topic names into PencilBlue. The file should contain no other information.',
-        TOPICS_CSV_FILE: 'CSV file containing topic names'
+        MANAGE_TOPICS: 'Quản lý chủ đề',
+        NEW_TOPIC: 'Tạo chủ đề',
+        TOPIC_NAME: 'Tên chủ đề',
+        EXISTING_TOPIC: 'Chủ đề đã tồn tại',
+        TOPICS_CREATED: 'Chủ đề đã được tạo thành công',
+        IMPORT_TOPICS: 'Import chủ đề',
+        IMPORT_TOPICS_HELP: 'Bạn có thể import chủ đề thông qua một file CSV tại đây. File chỉ nên chứa những tên của chủ đề.',
+        TOPICS_CSV_FILE: 'File CSV chứa chủ đề',
+        TOPICS_OK: 'OK',
+        ERROR_FORBIDDEN: 'Bạn không có quyền xóa chủ đề: '
     },
     media: {
         MANAGE_MEDIA: 'Manage media',

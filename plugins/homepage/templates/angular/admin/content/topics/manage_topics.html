@@ -109,9 +109,9 @@
           $scope.deleting = false;
           $scope.errorMessage = error.message;
           $('#confirm_delete_modal').modal('hide');
+          $('#error_delete_modal').modal('show');
           return;
         }
-
         for(var i = 0; i < $scope.topics.length; i ++) {
           if($scope.topics[i]._id.toString() === $scope.objectToDelete._id.toString()) {
             $scope.topics.splice(i, 1);

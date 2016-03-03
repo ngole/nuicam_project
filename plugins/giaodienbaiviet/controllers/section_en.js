@@ -139,12 +139,44 @@ module.exports = function(pb) {
             };
             pb.ContentObjectService.setPublishedClause(opts.where);
             self.service.getBySection(section, opts, function(err, content) {
-                var result = {
-                    section: section,
-                    content: content
-                };
-                //console.log(result);
-                cb(err, result);
+                self.dao.loadByValue('name','TIN TỨC VÀ SỰ KIỆN', 'topic', function (err, news_section) {
+                    if (util.isError(err) || news_section == null) {
+                        return cb(null, null);
+                    }
+                    var opts_news = {
+                        render: true,
+                        where: {},
+                        limit: 5,
+                        offset: 0,
+                        order: [{'publish_date': pb.DAO.DESC}, {'created': pb.DAO.DESC}]
+                    };
+                    pb.ContentObjectService.setPublishedClause(opts_news.where);
+                    self.service.getNewsBySection(news_section, opts_news, content, function (err, news_content) {
+                        content.news_content = news_content;
+                        self.dao.loadByValue('name','VĂN BẢN MỚI', 'topic', function (err, docs_section) {
+                            if (util.isError(err) || docs_section == null) {
+                                return cb(null, null);
+                            }
+                            var opts_docs = {
+                                render: true,
+                                where: {},
+                                limit: 5,
+                                offset: 0,
+                                order: [{'publish_date': pb.DAO.DESC}, {'created': pb.DAO.DESC}]
+                            };
+                            pb.ContentObjectService.setPublishedClause(opts_docs.where);
+                            self.service.getDocsBySection(docs_section, opts_docs, content, function (err, docs_content) {
+                                content.docs_content = docs_content;
+                                var result = {
+                                    section: section,
+                                    content: content
+                                };
+                                //console.log(result);
+                                cb(err, result);
+                            });
+                        });
+                    });
+                });
             });
         });
     };

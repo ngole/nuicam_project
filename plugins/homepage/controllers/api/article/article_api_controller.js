@@ -23,51 +23,19 @@ module.exports = function(pb){
     var util = pb.util;
     var BaseController = pb.BaseController;
     var content_view_loader = pb.ContentViewLoader;
+    var article_news = pb.ArticleNews;
 
     function article_api_controller(){};
     util.inherits(article_api_controller, BaseController);
-    //GetMenu.prototype.render = function(cb) {
-    //    var self = this;
-    //
-    //
-    //    this.getContent(function(err, menu) {
-    //        if (util.isError(err)) {
-    //            return cb(err);
-    //        }
-    //        var options = {};
-    //        self.contentViewLoader.onContent(menu, options, function(err, content) {
-    //            if (util.isError(err)) {
-    //                return cb(err);
-    //            }
-    //
-    //            //var data = {
-    //            //    count: articles.length,
-    //            //    articles: content.toString()
-    //            //};
-    //
-    //            var data = 1;
-    //            cb({
-    //                content: BaseController.apiResponse(pb.BaseController.API_SUCCESS, 'success', data)
-    //            });
-    //        });
-    //    });
-    //};
-    //
-    //
-    //GetMenu.prototype.getContent = function(cb) {
-    //
-    //    var where = {};
-    //
-    //    //retrieve articles
-    //    var opts = {
-    //        render: true,
-    //        where: where
-    //    };
-    //    this.service.getAll(opts, cb);
-    //};
-
     article_api_controller.prototype.getAllArticle = function(cb){
         var data = content_view_loader.getArticleApi();
+        cb({
+            content: BaseController.apiResponse(pb.BaseController.API_SUCCESS, 'success', data)
+        });
+    };
+
+    article_api_controller.prototype.getArticlesNews = function(cb){
+        var data = article_news.getArticlesNews();
         cb({
             content: BaseController.apiResponse(pb.BaseController.API_SUCCESS, 'success', data)
         });

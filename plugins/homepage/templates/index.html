@@ -24,17 +24,25 @@
         <div class="col-xs-2 bar left-bar">
             <div class="box">
                 <div class="box-header">
-                    <a href="">TIN TỨC & SỰ KIỆN</a>
+                    <a href="^news_read_more_link^">^news_and_event^</a>
                 </div>
                 <div class="box-content">
-
+                    ^articles_news^
                 </div>
                 <div class="box-footer">
-                    <a href="#">Xem thêm tin</a>
+                    <a href="^news_read_more_link^">^label_read_more^</a>
                 </div>
             </div>
             <div class="box">
-
+                <div class="box-header">
+                    <a href="^docs_read_more_link^">^docs^</a>
+                </div>
+                <div class="box-content">
+                    ^articles_docs^
+                </div>
+                <div class="box-footer">
+                    <a href="^docs_read_more_link^">^label_read_more^</a>
+                </div>
             </div>
         </div>
         <div class="col-xs-8 news-show">
@@ -51,7 +59,6 @@
             if(isNaN(currentPage)){
                 currentPage = 1;
             }
-            console.log(currentPage+'   '+totalPage);
             var url = '^current_url^';
             if(url.indexOf('?') != -1){
                 url = url.substring(0,url.indexOf('?'));
@@ -71,7 +78,8 @@
         </script>
 
     </div>
-    <div class="spacer"></div>
+    <div class="spacer">
+    </div>
         </div>
     </div>
 </div>

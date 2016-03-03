@@ -19,6 +19,7 @@
 var util        = require('../../../util.js');
 var async       = require('async');
 var HtmlEncoder = require('htmlencode');
+var config = require('../../../config.js');
 
 module.exports = function(pb) {
 
@@ -90,19 +91,17 @@ module.exports = function(pb) {
             if (util.isError(err)) {
                 return cb(err);
             }
-
             self.setMetaInfo(data.meta, options);
             self.ts.registerLocal('current_url', self.req.url);
             self.ts.registerLocal('navigation', new pb.TemplateValue(data.nav.navigation, false));
             self.ts.registerLocal('navigation_en', new pb.TemplateValue(data.nav.navigation_en, false));
             self.ts.registerLocal('account_buttons', new pb.TemplateValue(data.nav.accountButtons, false));
-            if(isNaN(contentArray[2])){
-                if(!isNaN(contentArray[1])){
-                    self.ts.registerLocal('total_page', new pb.TemplateValue(contentArray[1], false));
-                }
-            }else {
-                self.ts.registerLocal('total_page', new pb.TemplateValue(contentArray[2], false));
-            };
+            self.ts.registerLocal('total_page', new pb.TemplateValue(contentArray[contentArray.length-1], false));
+            self.ts.registerLocal('news_read_more_link', new pb.TemplateValue(config.getBaseConfig().siteRoot+'/vn/tintuc-va-sukien', false));
+            self.ts.registerLocal('docs_read_more_link', new pb.TemplateValue(config.getBaseConfig().siteRoot+'/vn/he-thong-van-ban', false));
+            self.ts.registerLocal('label_read_more', new pb.TemplateValue('Xem thêm tin', false));
+            self.ts.registerLocal('news_and_event', new pb.TemplateValue('TIN TỨC VÀ SỰ KIỆN', false));
+            self.ts.registerLocal('docs', new pb.TemplateValue('VĂN BẢN MỚI', false));
             self.ts.registerLocal('infinite_scroll', function(flag, cb) {
                 self.onInfiniteScroll(contentArray, options, cb);
             });
@@ -114,6 +113,12 @@ module.exports = function(pb) {
             });
             self.ts.registerLocal('articles', function(flag, cb) {
                 self.onContent(contentArray, options, cb);
+            });
+            self.ts.registerLocal('articles_news', function(flag, cb){
+                self.onContentNews(contentArray.news_content, options, cb);
+            });
+            self.ts.registerLocal('articles_docs', function(flag,cb){
+                self.onContentDocs(contentArray.docs_content, options, cb);
             });
             contentApi = contentArray;
             self.getTemplate(contentArray, options, function(err, template) {
@@ -138,13 +143,12 @@ module.exports = function(pb) {
             self.ts.registerLocal('navigation', new pb.TemplateValue(data.nav.navigation, false));
             self.ts.registerLocal('navigation_en', new pb.TemplateValue(data.nav.navigation_en, false));
             self.ts.registerLocal('account_buttons', new pb.TemplateValue(data.nav.accountButtons, false));
-            if(isNaN(contentArray[2])){
-                if(!isNaN(contentArray[1])){
-                    self.ts.registerLocal('total_page', new pb.TemplateValue(contentArray[1], false));
-                }
-            }else {
-                self.ts.registerLocal('total_page', new pb.TemplateValue(contentArray[2], false));
-            };
+            self.ts.registerLocal('total_page', new pb.TemplateValue(contentArray[contentArray.length-1], false));
+            self.ts.registerLocal('news_read_more_link', new pb.TemplateValue(config.getBaseConfig().siteRoot+'/en/news-and-events', false));
+            self.ts.registerLocal('docs_read_more_link', new pb.TemplateValue(config.getBaseConfig().siteRoot+'/en/documents', false));
+            self.ts.registerLocal('label_read_more', new pb.TemplateValue('Read more', false));
+            self.ts.registerLocal('news_and_event', new pb.TemplateValue('NEWS AND EVENTS', false));
+            self.ts.registerLocal('docs', new pb.TemplateValue('Documents', false));
             self.ts.registerLocal('infinite_scroll', function(flag, cb) {
                 self.onInfiniteScroll(contentArray, options, cb);
             });
@@ -157,7 +161,13 @@ module.exports = function(pb) {
             self.ts.registerLocal('articles', function(flag, cb) {
                 self.onContentEn(contentArray, options, cb);
             });
-            //console.log(contentArray);
+            self.ts.registerLocal('articles_news', function(flag, cb){
+                self.onContentNewsEn(contentArray.news_content, options, cb);
+            });
+            self.ts.registerLocal('articles_docs', function(flag, cb){
+                self.onContentDocsEn(contentArray.docs_content, options, cb);
+            });
+            contentApi = contentArray;
             self.getTemplate(contentArray, options, function(err, template) {
                 if (util.isError(err)) {
                     return cb(err);
@@ -167,7 +177,6 @@ module.exports = function(pb) {
             });
         });
     };
-
     /**
      *
      * @method getTemplate
@@ -279,6 +288,76 @@ module.exports = function(pb) {
                     return callback(null, '');
                 }
                 self.renderContentEn(contentArray[i], options, callback);
+            };
+        });
+        async.series(tasks, function(err, content) {
+            cb(err, new pb.TemplateValue(content.join(''), false));
+        });
+    };
+
+
+    ContentViewLoader.prototype.onContentNews = function(contentArray, options, cb) {
+        var self  = this;
+        var limit = Math.min(this.contentSettings.articles_per_page, contentArray.length);
+
+        var tasks = util.getTasks(contentArray, function(contentArray, i) {
+            return function(callback) {
+                if (i >= limit) {
+                    return callback(null, '');
+                }
+                self.renderContentNews(contentArray[i], options, callback);
+            };
+        });
+        async.series(tasks, function(err, content) {
+            cb(err, new pb.TemplateValue(content.join(''), false));
+        });
+    };
+
+    ContentViewLoader.prototype.onContentNewsEn = function(contentArray, options, cb) {
+        var self  = this;
+        var limit = Math.min(this.contentSettings.articles_per_page, contentArray.length);
+
+        var tasks = util.getTasks(contentArray, function(contentArray, i) {
+            return function(callback) {
+                if (i >= limit) {
+                    return callback(null, '');
+                }
+                self.renderContentNewsEn(contentArray[i], options, callback);
+            };
+        });
+        async.series(tasks, function(err, content) {
+            cb(err, new pb.TemplateValue(content.join(''), false));
+        });
+    };
+
+
+    ContentViewLoader.prototype.onContentDocs = function(contentArray, options, cb) {
+        var self  = this;
+        var limit = Math.min(this.contentSettings.articles_per_page, contentArray.length);
+
+        var tasks = util.getTasks(contentArray, function(contentArray, i) {
+            return function(callback) {
+                if (i >= limit) {
+                    return callback(null, '');
+                }
+                self.renderContentDocs(contentArray[i], options, callback);
+            };
+        });
+        async.series(tasks, function(err, content) {
+            cb(err, new pb.TemplateValue(content.join(''), false));
+        });
+    };
+
+    ContentViewLoader.prototype.onContentDocsEn = function(contentArray, options, cb) {
+        var self  = this;
+        var limit = Math.min(this.contentSettings.articles_per_page, contentArray.length);
+
+        var tasks = util.getTasks(contentArray, function(contentArray, i) {
+            return function(callback) {
+                if (i >= limit) {
+                    return callback(null, '');
+                }
+                self.renderContentDocsEn(contentArray[i], options, callback);
             };
         });
         async.series(tasks, function(err, content) {
@@ -445,7 +524,6 @@ module.exports = function(pb) {
         var showByLine       = this.contentSettings.display_bylines && !isPage;
         var showTimestamp    = this.contentSettings.display_timestamp && !isPage;
         var ats              = self.ts.getChildInstance();
-        var contentUrlPrefix = '/' + this.service.getType() + '/';
         self.ts.reprocess = false;
         ats.registerLocal('article_permalink', function(flag, cb) {
             self.onContentPermalink(content, options, cb);
@@ -496,7 +574,6 @@ module.exports = function(pb) {
         var showByLine       = this.contentSettings.display_bylines && !isPage;
         var showTimestamp    = this.contentSettings.display_timestamp && !isPage;
         var ats              = self.ts.getChildInstance();
-        var contentUrlPrefix = '/' + this.service.getType() + '/';
         self.ts.reprocess = false;
         ats.registerLocal('article_permalink', function(flag, cb) {
             self.onContentPermalink(content, options, cb);
@@ -535,6 +612,96 @@ module.exports = function(pb) {
         options.contentIndex++;
     };
 
+    ContentViewLoader.prototype.renderContentNews = function(content, options, cb) {
+        var self = this;
+
+        //set recurring params
+        if (util.isNullOrUndefined(options.contentIndex)) {
+            options.contentIndex = 0;
+        }
+        var isPage           = this.service.getType() === 'page';
+        var ats              = self.ts.getChildInstance();
+        self.ts.reprocess = false;
+        ats.registerLocal('article_permalink', function(flag, cb) {
+            self.onContentPermalink(content, options, cb);
+        });
+        ats.registerLocal('article_headline', function(flag, cb) {
+            self.onContentHeadline(content, options, cb);
+        });
+        ats.registerLocal('article_url', content.url_en);
+        ats.load(self.getDefaultContentTemplatePathNews(), cb);
+
+        options.contentIndex++;
+    };
+
+
+    ContentViewLoader.prototype.renderContentNewsEn = function(content, options, cb) {
+        var self = this;
+
+        //set recurring params
+        if (util.isNullOrUndefined(options.contentIndex)) {
+            options.contentIndex = 0;
+        }
+        var isPage           = this.service.getType() === 'page';
+        var ats              = self.ts.getChildInstance();
+        self.ts.reprocess = false;
+        ats.registerLocal('article_permalink', function(flag, cb) {
+            self.onContentPermalink(content, options, cb);
+        });
+        ats.registerLocal('article_headline', function(flag, cb) {
+            self.onContentHeadlineEn(content, options, cb);
+        });
+        ats.registerLocal('article_url', content.url_en);
+        ats.load(self.getDefaultContentTemplatePathNews(), cb);
+
+        options.contentIndex++;
+    };
+
+    ContentViewLoader.prototype.renderContentDocs = function(content, options, cb) {
+        var self = this;
+
+        //set recurring params
+        if (util.isNullOrUndefined(options.contentIndex)) {
+            options.contentIndex = 0;
+        }
+        var isPage           = this.service.getType() === 'page';
+        var ats              = self.ts.getChildInstance();
+        self.ts.reprocess = false;
+        ats.registerLocal('article_permalink', function(flag, cb) {
+            self.onContentPermalink(content, options, cb);
+        });
+        ats.registerLocal('article_headline', function(flag, cb) {
+            self.onContentHeadline(content, options, cb);
+        });
+        ats.registerLocal('article_url', content.url_en);
+        ats.load(self.getDefaultContentTemplatePathNews(), cb);
+
+        options.contentIndex++;
+    };
+
+
+    ContentViewLoader.prototype.renderContentDocsEn = function(content, options, cb) {
+        var self = this;
+
+        //set recurring params
+        if (util.isNullOrUndefined(options.contentIndex)) {
+            options.contentIndex = 0;
+        }
+        var isPage           = this.service.getType() === 'page';
+        var ats              = self.ts.getChildInstance();
+        self.ts.reprocess = false;
+        ats.registerLocal('article_permalink', function(flag, cb) {
+            self.onContentPermalink(content, options, cb);
+        });
+        ats.registerLocal('article_headline', function(flag, cb) {
+            self.onContentHeadlineEn(content, options, cb);
+        });
+        ats.registerLocal('article_url', content.url_en);
+        ats.load(self.getDefaultContentTemplatePathNews(), cb);
+
+        options.contentIndex++;
+    };
+
     /**
      *
      * @method getDefaultContentTemplatePath
@@ -542,6 +709,10 @@ module.exports = function(pb) {
      */
     ContentViewLoader.prototype.getDefaultContentTemplatePath = function() {
         return 'elements/article';
+    };
+
+    ContentViewLoader.prototype.getDefaultContentTemplatePathNews = function() {
+        return 'elements/article_left';
     };
 
     /**

@@ -269,6 +269,8 @@ module.exports = function PB(config) {
     pb.ArticleService        = ArticleServiceModule.ArticleService;
     pb.MediaLoader           = ArticleServiceModule.MediaLoader;
     pb.CommentService        = require(config.docRoot+'/include/theme/comments.js')(pb);
+    //api
+    pb.ArticleNews = require(path.join(config.docRoot, 'include/service/entities/article_news.js'))(pb);
 
     return pb;
 };

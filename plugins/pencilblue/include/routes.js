@@ -439,7 +439,7 @@ module.exports = function Routes(pb){
         {
             method: 'delete',
             path: "/actions/admin/content/navigation/:id",
-            access_level: pb.SecurityService.ACCESS_EDITOR,
+            access_level: pb.SecurityService.ACCESS_ADMINISTRATOR,
             auth_required: true,
             inactive_site_access: true,
             controller: path.join(pb.config.docRoot, 'plugins', 'pencilblue', 'controllers', 'actions', 'admin', 'content', 'navigation', 'delete_nav_item.js'),
@@ -1323,7 +1323,7 @@ module.exports = function Routes(pb){
             handler: "delete",
             content_type: 'application/json',
             auth_required: true,
-            access_level: pb.SecurityService.ACCESS_EDITOR,
+            access_level: pb.SecurityService.ACCESS_ADMINISTRATOR,
             controller: path.join(pb.config.docRoot, 'plugins/pencilblue/controllers/api/content/topic_api_controller.js')
         },
         {
@@ -1420,5 +1420,14 @@ module.exports = function Routes(pb){
             content_type: 'application/json',
             request_body: ['application/json']
         },
+        {
+            method: 'get',
+            path: "/api/article/get_articles_news",
+            handler: "getArticleNews",
+            auth_required: false,
+            controller: path.join(pb.config.docRoot, 'plugins', 'homepage', 'controllers', 'api', 'article', 'article_api_controller.js'),
+            content_type: 'application/json',
+            request_body: ['application/json']
+        }
     ];
 };

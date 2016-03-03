@@ -73,7 +73,6 @@
             .success(function(result) {
                 $scope.successMessage = result.message;
                 $scope.saving = false;
-
                 if(result.data) {
                     $scope.formSubmitted = false;
                     $scope.navItem = {type: 'container'};

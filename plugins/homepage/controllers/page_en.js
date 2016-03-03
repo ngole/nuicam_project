@@ -74,7 +74,6 @@ module.exports = function(pb) {
             }
             //console.log(content);
             var options = {};
-            console.log(options);
             self.contentViewLoader.render_en([content], options, function(err, html) {
                 if (util.isError(err)) {
                     return cb(err);

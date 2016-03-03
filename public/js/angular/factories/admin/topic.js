@@ -33,7 +33,8 @@
           cb(null, result);
         })
         .error(function(error) {
-          cb(error);
+           var err = 'Bạn không có quyền xóa!';
+          cb(err);
         });
       }
     };

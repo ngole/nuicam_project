@@ -111,6 +111,49 @@ module.exports = function(pb) {
         this.getAll(options, cb);
     };
 
+    ArticleServiceV2.prototype.getNewsBySection = function(sectionId, options, result, cb) {
+        if (util.isFunction(options)) {
+            cb = options;
+            options = {};
+        }
+
+        //ensure a where clause exists
+        if (!util.isObject(options.where)) {
+            options.where = {};
+        }
+
+        //add where clause to search based on section
+        var section = sectionId;
+        if (util.isObject(section)) {
+            section = section[pb.DAO.getIdField()] + '';
+        }
+        //console.log(section);
+        options.where.article_topics = section;
+        this.getAll(options, cb);
+    };
+
+    ArticleServiceV2.prototype.getDocsBySection = function(sectionId, options, result, cb) {
+        if (util.isFunction(options)) {
+            cb = options;
+            options = {};
+        }
+
+        //ensure a where clause exists
+        if (!util.isObject(options.where)) {
+            options.where = {};
+        }
+
+        //add where clause to search based on section
+        var section = sectionId;
+        if (util.isObject(section)) {
+            section = section[pb.DAO.getIdField()] + '';
+        }
+        //console.log(section);
+        options.where.article_topics = section;
+        this.getAll(options, cb);
+    };
+
+
     ArticleServiceV2.prototype.getCountBySection = function(sectionId, content, options, cb) {
         if (util.isFunction(options)) {
             cb = options;
