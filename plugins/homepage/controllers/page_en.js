@@ -40,12 +40,12 @@ module.exports = function(pb) {
 
             //create the service
             self.service = new pb.PageServiceEn(self.getServiceContext());
-
+            self.serviceArticle = new pb.ArticleServiceV2(self.getServiceContext());
             //create the loader context
             var context     = self.getServiceContext();
             context.service = self.service;
             self.contentViewLoader = new pb.ContentViewLoader(context);
-
+            self.dao = new pb.DAO();
             cb(null, true);
         };
         PageEnViewController.super_.prototype.init.apply(this, [context, init]);
@@ -72,17 +72,18 @@ module.exports = function(pb) {
             else if (content == null) {
                 return self.reqHandler.serve404();
             }
-            //console.log(content);
-            var options = {};
-            self.contentViewLoader.render_en([content], options, function(err, html) {
-                if (util.isError(err)) {
-                    return cb(err);
-                }
+            self.getContent(function(err, data){
+                var options = {};
+                self.contentViewLoader.render_en([content], data, options, function(err, html) {
+                    if (util.isError(err)) {
+                        return cb(err);
+                    }
 
-                var result = {
-                    content: html
-                };
-                cb(result);
+                    var result = {
+                        content: html
+                    };
+                    cb(result);
+                });
             });
         });
     };
@@ -126,6 +127,48 @@ module.exports = function(pb) {
             where = conditions[0];
         }
         return where;
+    };
+
+    PageEnViewController.prototype.getContent = function(cb) {
+        var self = this;
+        //lookup by URL
+        var content ={};
+        self.dao.loadByValue('name','TIN TỨC VÀ SỰ KIỆN', 'topic', function (err, news_section) {
+            if (util.isError(err) || news_section == null) {
+                return cb(null, null);
+            }
+            var opts_news = {
+                render: true,
+                where: {},
+                limit: 5,
+                offset: 0,
+                order: [{'publish_date': pb.DAO.DESC}, {'created': pb.DAO.DESC}]
+            };
+            pb.ContentObjectService.setPublishedClause(opts_news.where);
+            self.serviceArticle.getNewsBySection(news_section, opts_news, content, function (err, news_content) {
+                content.news_content = news_content;
+                self.dao.loadByValue('name', 'VĂN BẢN MỚI', 'topic', function (err, docs_section){
+                    if(util.isError(err) || docs_section == null){
+                        return cb(null, null);
+                    }
+                    var opts_docs = {
+                        render: true,
+                        where: {},
+                        limit: 5,
+                        offset: 0,
+                        order: [{'publish_date': pb.DAO.DESC}, {'created': pb.DAO.DESC}]
+                    };
+                    pb.ContentObjectService.setPublishedClause(opts_docs.where);
+                    self.serviceArticle.getDocsBySection(docs_section, opts_docs, content, function(err, docs_content){
+                        content.docs_content = docs_content;
+                        var result = {
+                            content: content
+                        };
+                        cb(err, result);
+                    });
+                });
+            });
+        });
     };
 
     //exports

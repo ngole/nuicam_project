@@ -85,8 +85,14 @@ module.exports = function(pb) {
      * @param {Object} [options.section] The section represented by the collection of content to be rendered
      * @param {Function} cb
      */
-    ContentViewLoader.prototype.render = function(contentArray, options, cb) {
+    ContentViewLoader.prototype.render = function(contentArray, data_topic, options, cb) {
         var self = this;
+        if(data_topic !== null){
+            //console.log(data_topic.content.news_content);
+            contentArray.news_content = data_topic.content.news_content;
+            contentArray.docs_content = data_topic.content.docs_content;
+        }
+        //console.log(contentArray.news_content);
         this.gatherData(contentArray, options, function(err, data) {
             if (util.isError(err)) {
                 return cb(err);
@@ -131,8 +137,13 @@ module.exports = function(pb) {
         });
     };
 
-    ContentViewLoader.prototype.render_en = function(contentArray, options, cb) {
+    ContentViewLoader.prototype.render_en = function(contentArray, data_topic, options, cb) {
         var self = this;
+        if(data_topic !== null){
+            //console.log(data_topic.content.news_content);
+            contentArray.news_content = data_topic.content.news_content;
+            contentArray.docs_content = data_topic.content.docs_content;
+        }
         this.gatherData(contentArray, options, function(err, data) {
             if (util.isError(err)) {
                 return cb(err);
@@ -298,7 +309,7 @@ module.exports = function(pb) {
 
     ContentViewLoader.prototype.onContentNews = function(contentArray, options, cb) {
         var self  = this;
-        var limit = Math.min(this.contentSettings.articles_per_page, contentArray.length);
+        var limit = Math.max(this.contentSettings.articles_per_page, contentArray.length);
 
         var tasks = util.getTasks(contentArray, function(contentArray, i) {
             return function(callback) {
@@ -315,7 +326,7 @@ module.exports = function(pb) {
 
     ContentViewLoader.prototype.onContentNewsEn = function(contentArray, options, cb) {
         var self  = this;
-        var limit = Math.min(this.contentSettings.articles_per_page, contentArray.length);
+        var limit = Math.max(this.contentSettings.articles_per_page, contentArray.length);
 
         var tasks = util.getTasks(contentArray, function(contentArray, i) {
             return function(callback) {
@@ -326,6 +337,7 @@ module.exports = function(pb) {
             };
         });
         async.series(tasks, function(err, content) {
+            console.log(content);
             cb(err, new pb.TemplateValue(content.join(''), false));
         });
     };
@@ -333,7 +345,7 @@ module.exports = function(pb) {
 
     ContentViewLoader.prototype.onContentDocs = function(contentArray, options, cb) {
         var self  = this;
-        var limit = Math.min(this.contentSettings.articles_per_page, contentArray.length);
+        var limit = Math.max(this.contentSettings.articles_per_page, contentArray.length);
 
         var tasks = util.getTasks(contentArray, function(contentArray, i) {
             return function(callback) {
@@ -350,7 +362,7 @@ module.exports = function(pb) {
 
     ContentViewLoader.prototype.onContentDocsEn = function(contentArray, options, cb) {
         var self  = this;
-        var limit = Math.min(this.contentSettings.articles_per_page, contentArray.length);
+        var limit = Math.max(this.contentSettings.articles_per_page, contentArray.length);
 
         var tasks = util.getTasks(contentArray, function(contentArray, i) {
             return function(callback) {
@@ -629,6 +641,8 @@ module.exports = function(pb) {
             self.onContentHeadline(content, options, cb);
         });
         ats.registerLocal('article_url', content.url_en);
+        ats.registerLocal('article_id', content[pb.DAO.getIdField()] + '');
+        ats.registerLocal('article_index', options.contentIndex);
         ats.load(self.getDefaultContentTemplatePathNews(), cb);
 
         options.contentIndex++;
@@ -652,6 +666,8 @@ module.exports = function(pb) {
             self.onContentHeadlineEn(content, options, cb);
         });
         ats.registerLocal('article_url', content.url_en);
+        ats.registerLocal('article_id', content[pb.DAO.getIdField()] + '');
+        ats.registerLocal('article_index', options.contentIndex);
         ats.load(self.getDefaultContentTemplatePathNews(), cb);
 
         options.contentIndex++;
@@ -674,6 +690,8 @@ module.exports = function(pb) {
             self.onContentHeadline(content, options, cb);
         });
         ats.registerLocal('article_url', content.url_en);
+        ats.registerLocal('article_id', content[pb.DAO.getIdField()] + '');
+        ats.registerLocal('article_index', options.contentIndex);
         ats.load(self.getDefaultContentTemplatePathNews(), cb);
 
         options.contentIndex++;
@@ -697,6 +715,8 @@ module.exports = function(pb) {
             self.onContentHeadlineEn(content, options, cb);
         });
         ats.registerLocal('article_url', content.url_en);
+        ats.registerLocal('article_id', content[pb.DAO.getIdField()] + '');
+        ats.registerLocal('article_index', options.contentIndex);
         ats.load(self.getDefaultContentTemplatePathNews(), cb);
 
         options.contentIndex++;
@@ -908,12 +928,12 @@ module.exports = function(pb) {
      * @return {String}
      */
     ContentViewLoader.prototype.createContentPermalink = function(content) {
-        var prefix = '/' + this.service.getType();
+        var prefix = '/vn_' + this.service.getType();
         return pb.UrlService.createSystemUrl(pb.UrlService.urlJoin(prefix, content.url), { hostname: this.hostname });
     };
 
     ContentViewLoader.prototype.createContentPermalinkEn = function(content) {
-        var prefix = '/' + this.service.getType();
+        var prefix = '/en_' + this.service.getType();
         return pb.UrlService.createSystemUrl(pb.UrlService.urlJoin(prefix, content.url_en), { hostname: this.hostname });
     };
 

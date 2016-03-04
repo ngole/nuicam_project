@@ -97,10 +97,9 @@ module.exports = function(pb) {
             };
             pb.ContentObjectService.setPublishedClause(optsCount.where);
             var content = data.content;
-            //console.log(data.content);
             self.service.getCountBySection(data.section, content, optsCount, function(err, count) {
                 content.push(Math.ceil(count / self.contentSettings.articles_per_page));
-                self.contentViewLoader.render_en(content, options, function (err, html) {
+                self.contentViewLoader.render_en(content, null, options, function (err, html) {
                     if (util.isError(err)) {
                         return cb(err);
                     }

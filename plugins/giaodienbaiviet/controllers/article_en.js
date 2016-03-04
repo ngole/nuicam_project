@@ -1,13 +1,16 @@
 /*
  Copyright (C) 2015  PencilBlue, LLC
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
+
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -23,15 +26,15 @@ module.exports = function(pb) {
      * @constructor
      * @extends BaseController
      */
-    function PageViewController(){}
-    util.inherits(PageViewController, pb.BaseController);
+    function ArticleEnViewController(){}
+    util.inherits(ArticleEnViewController, pb.BaseController);
 
     /**
      * @method init
      * @param {Object} content
      * @param {Function} cb
      */
-    PageViewController.prototype.init = function(context, cb) {
+    ArticleEnViewController.prototype.init = function(context, cb) {
         var self = this;
         var init = function(err) {
             if (util.isError(err)) {
@@ -39,23 +42,23 @@ module.exports = function(pb) {
             }
 
             //create the service
-            self.service = new pb.PageService(self.getServiceContext());
-            self.serviceArticle = new pb.ArticleServiceV2(self.getServiceContext());
+            self.service = new pb.ArticleServiceV2(self.getServiceContext());
+
             //create the loader context
             var context     = self.getServiceContext();
             context.service = self.service;
             self.contentViewLoader = new pb.ContentViewLoader(context);
-            self.dao = new pb.DAO();
+            self.dao                   = new pb.DAO();
             cb(null, true);
         };
-        PageViewController.super_.prototype.init.apply(this, [context, init]);
+        ArticleEnViewController.super_.prototype.init.apply(this, [context, init]);
     };
 
     /**
      * @method render
      * @param {Function} cb
      */
-    PageViewController.prototype.render = function(cb) {
+    ArticleEnViewController.prototype.render = function(cb) {
         var self    = this;
         var custUrl = this.pathVars.customUrl;
 
@@ -64,17 +67,17 @@ module.exports = function(pb) {
             render: true,
             where: this.getWhereClause(custUrl)
         };
-        //console.log(opts.where);
-        this.service.getSingle(opts, function(err, content) {
+        this.service.getSingle(opts, function(err, article) {
+            //console.log(article);
             if (util.isError(err)) {
                 return cb(err);
             }
-            else if (content == null) {
+            else if (article == null) {
                 return self.reqHandler.serve404();
             }
             self.getContent(function(err, data){
                 var options = {};
-                self.contentViewLoader.render([content], data, options, function(err, html) {
+                self.contentViewLoader.render_en([article], data, options, function(err, html) {
                     if (util.isError(err)) {
                         return cb(err);
                     }
@@ -98,22 +101,17 @@ module.exports = function(pb) {
      * @return {Object} An object representing the where clause to use in the
      * query to locate the article
      */
-    PageViewController.prototype.getWhereClause = function(custUrl) {
+    ArticleEnViewController.prototype.getWhereClause = function(custUrl) {
 
         //put a check to look up by ID *FIRST*
         var conditions = [];
         if(pb.validation.isIdStr(custUrl, true)) {
-            pb.DAO.loadByValues({url: custUrl}, 'page', {select: '_id'}, function(err, id){
-                if(util.error){
-                    return cb(err);
-                }
-                conditions.push(id);
-            });
+            conditions.push(pb.DAO.getIdWhere(custUrl));
         }
 
         //put a check to look up by URL
         conditions.push({
-            url: custUrl
+            url_en: custUrl
         });
 
         //check for object ID as the custom URL
@@ -129,7 +127,7 @@ module.exports = function(pb) {
         return where;
     };
 
-    PageViewController.prototype.getContent = function(cb) {
+    ArticleEnViewController.prototype.getContent = function(cb) {
         var self = this;
         //lookup by URL
         var content ={};
@@ -145,7 +143,7 @@ module.exports = function(pb) {
                 order: [{'publish_date': pb.DAO.DESC}, {'created': pb.DAO.DESC}]
             };
             pb.ContentObjectService.setPublishedClause(opts_news.where);
-            self.serviceArticle.getNewsBySection(news_section, opts_news, content, function (err, news_content) {
+            self.service.getNewsBySection(news_section, opts_news, content, function (err, news_content) {
                 content.news_content = news_content;
                 self.dao.loadByValue('name', 'VĂN BẢN MỚI', 'topic', function (err, docs_section){
                     if(util.isError(err) || docs_section == null){
@@ -159,7 +157,7 @@ module.exports = function(pb) {
                         order: [{'publish_date': pb.DAO.DESC}, {'created': pb.DAO.DESC}]
                     };
                     pb.ContentObjectService.setPublishedClause(opts_docs.where);
-                    self.serviceArticle.getDocsBySection(docs_section, opts_docs, content, function(err, docs_content){
+                    self.service.getDocsBySection(docs_section, opts_docs, content, function(err, docs_content){
                         content.docs_content = docs_content;
                         var result = {
                             content: content
@@ -172,5 +170,5 @@ module.exports = function(pb) {
     };
 
     //exports
-    return PageViewController;
+    return ArticleEnViewController;
 };

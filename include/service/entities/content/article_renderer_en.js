@@ -422,7 +422,7 @@ module.exports = function(pb) {
      * @return {String}
      */
     ArticleRendererEn.prototype.getContentLinkPrefix = function() {
-        return '/article/';
+        return '/en_article/';
     };
 
     /**

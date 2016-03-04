@@ -568,7 +568,7 @@ module.exports = function(pb) {
 
     ArticleRenderer.prototype.getReadMoreLinkEn = function(content, anchorContent) {
 
-        var path = pb.UrlService.urlJoin(this.getContentLinkPrefixEn() + content.url);
+        var path = pb.UrlService.urlJoin(this.getContentLinkPrefixEn() + content.url_en);
         return '<a class="read-more" href="' + pb.UrlService.createSystemUrl(path, { hostname: this.hostname }) + '">' + anchorContent + '</a>';
     };
 
@@ -577,11 +577,11 @@ module.exports = function(pb) {
      * @return {String}
      */
     ArticleRenderer.prototype.getContentLinkPrefix = function() {
-        return '/article/';
+        return '/vn_article/';
     };
 
     ArticleRenderer.prototype.getContentLinkPrefixEn = function() {
-        return '/article/';
+        return '/en_article/';
     };
 
     /**

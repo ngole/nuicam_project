@@ -249,9 +249,17 @@ module.exports = function Routes(pb){
         },
         {
             method: 'get',
-            path: "/article/:customUrl",
+            path: "/vn_article/:customUrl",
             auth_required: false,
             controller: path.join(pb.config.docRoot, 'plugins', 'giaodienbaiviet', 'controllers', 'article.js'),
+            content_type: 'text/html',
+            localization: true
+        },
+        {
+            method: 'get',
+            path: "/en_article/:customUrl",
+            auth_required: false,
+            controller: path.join(pb.config.docRoot, 'plugins', 'giaodienbaiviet', 'controllers', 'article_en.js'),
             content_type: 'text/html',
             localization: true
         },
