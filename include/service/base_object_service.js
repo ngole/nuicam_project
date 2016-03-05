@@ -248,7 +248,7 @@ module.exports = function(pb) {
             cb      = options;
             options = {};
         }
-        //console.log(options.where.url_en);
+        //console.log("where" in options);
         //fire off the beforeGetAll event to allow plugins to modify queries
         var self    = this;
         var context = this.getContext(options);
@@ -261,28 +261,46 @@ module.exports = function(pb) {
             //TODO evaluate if this should be at the service level or controller 
             //level
             var limit = BaseObjectService.getLimit(options.limit);
-            if (options.where.url_en != null) {
-                //console.log('oke '+ options.where.url_en);
-                var opts = {
-                    select: options.select,
-                    where: options.where,
-                    order: options.order,
-                    limit: 1,
-                    offset: 0
-                };
-                self.dao.q(self.type, opts, function (err, results) {
-                    if (util.isError(err)) {
-                        return cb(err);
-                    }
-                    //console.log(results);
-                    results[0].article_layout = results[0].article_layout_en;
-                    context.data = results;
-                    self._emit(BaseObjectService.GET_ALL, context, function (err) {
-                        cb(err, results);
+            if(options.where !== null) {
+                if (options.where.url_en != null) {
+                    //console.log('oke '+ options.where.url_en);
+                    var opts = {
+                        select: options.select,
+                        where: options.where,
+                        order: options.order,
+                        limit: 1,
+                        offset: 0
+                    };
+                    self.dao.q(self.type, opts, function (err, results) {
+                        if (util.isError(err)) {
+                            return cb(err);
+                        }
+                        //console.log(results);
+                        results[0].article_layout = results[0].article_layout_en;
+                        context.data = results;
+                        self._emit(BaseObjectService.GET_ALL, context, function (err) {
+                            cb(err, results);
+                        });
                     });
-                });
-            }
-            else {
+                } else{
+                    var opts = {
+                        select: options.select,
+                        where: options.where,
+                        order: options.order,
+                        limit: limit,
+                        offset: options.offset
+                    };
+                    self.dao.q(self.type, opts, function (err, results) {
+                        if (util.isError(err)) {
+                            return cb(err);
+                        }
+                        context.data = results;
+                        self._emit(BaseObjectService.GET_ALL, context, function (err) {
+                            cb(err, results);
+                        });
+                    });
+                }
+            } else {
                 var opts = {
                     select: options.select,
                     where: options.where,

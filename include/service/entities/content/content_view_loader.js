@@ -108,6 +108,8 @@ module.exports = function(pb) {
             self.ts.registerLocal('label_read_more', new pb.TemplateValue('Xem thêm tin', false));
             self.ts.registerLocal('news_and_event', new pb.TemplateValue('TIN TỨC VÀ SỰ KIỆN', false));
             self.ts.registerLocal('docs', new pb.TemplateValue('VĂN BẢN MỚI', false));
+            self.ts.registerLocal('video', new pb.TemplateValue('VIDEO', false));
+            self.ts.registerLocal('images', new pb.TemplateValue('THƯ VIỆN ẢNH', false));
             self.ts.registerLocal('infinite_scroll', function(flag, cb) {
                 self.onInfiniteScroll(contentArray, options, cb);
             });
@@ -126,6 +128,9 @@ module.exports = function(pb) {
             self.ts.registerLocal('articles_docs', function(flag,cb){
                 self.onContentDocs(contentArray.docs_content, options, cb);
             });
+            //self.ts.registerLocal('articles_video', function(flag,cb){
+            //    self.onContentDocs(contentArray.docs_content, options, cb);
+            //});
             contentApi = contentArray;
             self.getTemplate(contentArray, options, function(err, template) {
                 if (util.isError(err)) {
@@ -160,6 +165,8 @@ module.exports = function(pb) {
             self.ts.registerLocal('label_read_more', new pb.TemplateValue('Read more', false));
             self.ts.registerLocal('news_and_event', new pb.TemplateValue('NEWS AND EVENTS', false));
             self.ts.registerLocal('docs', new pb.TemplateValue('Documents', false));
+            self.ts.registerLocal('video', new pb.TemplateValue('VIDEO', false));
+            self.ts.registerLocal('images', new pb.TemplateValue('PHOTO LIBRARY'));
             self.ts.registerLocal('infinite_scroll', function(flag, cb) {
                 self.onInfiniteScroll(contentArray, options, cb);
             });
@@ -337,7 +344,6 @@ module.exports = function(pb) {
             };
         });
         async.series(tasks, function(err, content) {
-            console.log(content);
             cb(err, new pb.TemplateValue(content.join(''), false));
         });
     };
